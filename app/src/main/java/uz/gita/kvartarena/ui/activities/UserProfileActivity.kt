@@ -80,7 +80,7 @@ class UserProfileActivity : AppCompatActivity() {
         }
         binding.address.addTextChangedListener {
             changeAddress = App.user.address2?.replace("/", "\n") != it.toString()
-            user.address2 = it.toString().replace("\n", "/")
+            user.address2 = it.toString().replace(",\n", "/")
             checkSave()
         }
         binding.circleImageView.setOnClickListener {

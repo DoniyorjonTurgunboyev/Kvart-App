@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.Html
 import android.text.TextWatcher
-import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -32,6 +31,7 @@ class CostActivity : AppCompatActivity() {
     private var summa = 0
     private lateinit var progressDialog: ProgressDialog
     private var count = 0
+    private var save = false
     private val time = Calendar.getInstance().time
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +42,7 @@ class CostActivity : AppCompatActivity() {
         costListener()
         binding.spinner.setOnClickListener { loadTypeSpinner() }
         binding.saqla.setOnClickListener {
-            if (it.isClickable)
+            if (save)
                 save()
         }
         binding.back.setOnClickListener { finish() }
@@ -68,17 +68,17 @@ class CostActivity : AppCompatActivity() {
 
     private fun generate() {
         if (count == 0 || summa == 0) {
-            binding.saqla.visibility = View.INVISIBLE
-//            binding.saqla.isClickable = false
-//            binding.saqla.setBackgroundResource(R.drawable.login_back)
-//            binding.image.setImageResource(R.drawable.ic_save2)
-//            binding.saqlash.setTextColor(resources.getColor(R.color.seriy))
+            binding.saqla.isClickable = false
+            save = false
+            binding.saqla.setBackgroundResource(R.drawable.login_back)
+            binding.image.setImageResource(R.drawable.ic_save2)
+            binding.saqlash.setTextColor(resources.getColor(R.color.seriy))
         } else {
-            binding.saqla.visibility = View.VISIBLE
-//            binding.saqla.isClickable = true
-//            binding.saqla.setBackgroundResource(R.drawable.controls_bu)
-//            binding.image.setImageResource(R.drawable.ic_save)
-//            binding.saqlash.setTextColor(resources.getColor(R.color.white))
+            save = true
+            binding.saqla.isClickable = true
+            binding.saqla.setBackgroundResource(R.drawable.controls_bu)
+            binding.image.setImageResource(R.drawable.ic_save)
+            binding.saqlash.setTextColor(resources.getColor(R.color.white))
         }
         if (count == 0) {
             binding.generate.text = "Avval a'zolarni tanlang"

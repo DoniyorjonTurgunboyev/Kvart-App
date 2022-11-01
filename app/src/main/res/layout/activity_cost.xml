@@ -194,10 +194,10 @@
             android:textSize="16dp" />
 
         <ImageView
-            android:layout_marginEnd="8dp"
-            android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginEnd="8dp"
             android:src="@drawable/ic_more" />
     </LinearLayout>
 
@@ -240,15 +240,15 @@
         app:layout_constraintTop_toBottomOf="@+id/rv" />
 
     <RelativeLayout
-        android:visibility="invisible"
         android:id="@+id/saqla"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="24dp"
-        android:background="@drawable/controls_bu"
+        android:background="@drawable/login_back"
         android:clickable="false"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -264,7 +264,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal|center_vertical"
-                android:src="@drawable/ic_save" />
+                android:src="@drawable/ic_save2" />
 
             <Space
                 android:layout_width="8dp"
@@ -277,7 +277,7 @@
                 android:fontFamily="@font/inter_regular"
                 android:text="@string/saqlash"
                 android:textAppearance="@style/text"
-                android:textColor="@color/white" />
+                android:textColor="@color/seriy" />
         </LinearLayout>
 
     </RelativeLayout>
