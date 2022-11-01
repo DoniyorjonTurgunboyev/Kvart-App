@@ -1,0 +1,272 @@
+<resources>
+    <string name="app_name">Kvart App</string>
+    <string name="large_title">Xush kelibsiz!</string>
+    <string name="a_caption">Akkauntga kirish</string>
+    <string name="siz_kiritga">Siz kiritgan telefon raqamingizga sms ko`rinishida \n6 raqamdan iborat bo`lgan tasdiqlash kodi yuboriladi.</string>
+    <string name="men_ilovani">Men ilovaning <a href="https://uzarena.com">Maxfiylik siyosati</a> va <a href="https://uzarena.com">Ommaviy oferta</a> qoidalariga rozilik bildiraman.</string>
+    <string name="text">Kirish</string>
+    <string name="yangi_hisob">Yangi hisob yaratish</string>
+    <string name="tasdiqlash_">Tasdiqlash kodini kiriting</string>
+    <string name="telefon_raq">telefon raqamingizga yuborilgan smsdagi 6 raqamli kodni kiriting</string>
+    <string name="qayta">Kodni qayta yuborish:\t</string>
+    <string name="download">Rasm yuklash</string>
+    <string name="telegram">Telegramingiz (masalan: @smartboy)</string>
+    <string name="saqlash">Saqlash</string>
+    <string name="smartarena">\@smartarena</string>
+    <string name="yaratish">Yaratish</string>
+    <string name="xarajatlar_">Xarajatlar taqsimlanadigan kvartira aʼzolari:</string>
+    <string name="tanlangan_3">Tanlangan 3 ta kvartira aʼzosining har biriga: 0.00 UZS dan</string>
+    <string-array name="regions">
+        <item>Toshkent shahri</item>
+        <item>Farg\‘ona viloyati</item>
+        <item>Andijon viloyati</item>
+        <item>Buxoro viloyati</item>
+        <item>Jizzax viloyati</item>
+        <item>Qashqadaryo viloyati</item>
+        <item>Navoiy viloyati</item>
+        <item>Namangan viloyati</item>
+        <item>Samarqand viloyati</item>
+        <item>Surxondaryo viloyati</item>
+        <item>Sirdaryo viloyati</item>
+        <item>Toshkent viloyati</item>
+        <item>Xorazm viloyati</item>
+        <item>Qoraqalpog\‘iston Respublikasi</item>
+    </string-array>
+    <string-array name="qoraqalpogistonrespublikasi">
+        <item>Amudaryo tumani</item>
+        <item>Beruniy tumani</item>
+        <item>Bo\‘zatov tumani</item>
+        <item>Ellikqal\‘a tumani</item>
+        <item>Kegayli tumani</item>
+        <item>Mo\‘ynoq tumani</item>
+        <item>Nukus shahri</item>
+        <item>Nukus tumani</item>
+        <item>Qo\‘ng\‘irot tumani</item>
+        <item>Qonliko\‘l tumani</item>
+        <item>Qorao\‘zak tumani</item>
+        <item>Shumanay tumani</item>
+        <item>Taxiatosh shahri</item>
+        <item>Taxtako\‘pir tumani</item>
+        <item>To\‘rtko\‘l tumani</item>
+        <item>Xo\‘jayli tumani </item>
+        <item>Chimboy tumani</item>
+    </string-array>
+    <string-array name="andijonviloyati">
+        <item>Andijon shahri</item>
+        <item>Andijon tumani</item>
+        <item>Asaka shahri</item>
+        <item>Asaka tumani</item>
+        <item>Baliqchi tumani</item>
+        <item>Bo\‘z tumani</item>
+        <item>Buloqboshi tumani</item>
+        <item>Izbosgan tumani</item>
+        <item>Jalaquduq tumani</item>
+        <item>Marhamat tumani</item>
+        <item>Oltinko\‘l tumani</item>
+        <item>Paxtaobod tumani</item>
+        <item>Qo\‘rg\‘ontepa tumani</item>
+        <item>Qorasuv shahri</item>
+        <item>Shahrixon tumani</item>
+        <item>Ulug\‘nor tumani</item>
+        <item>Xo\‘jaobod tumani</item>
+        <item>Xonabod tumani</item>
+    </string-array>
+    <string-array name="buxoroviloyati">
+        <item>Buxoro shahri</item>
+        <item>Buxoro tumani</item>
+        <item>Vobkent tumani</item>
+        <item>Jondor tumani</item>
+        <item>Kogon tumani</item>
+        <item>Kogon shahri</item>
+        <item>Qorako\‘l tumani</item>
+        <item>Qorovulbozor tumani</item>
+        <item>Olot tumani</item>
+        <item>Peshku tumani</item>
+        <item>Romitan tumani</item>
+        <item>G\‘ijduvon tumani</item>
+        <item>Shofirkon tumani</item>
+    </string-array>
+    <string-array name="jizzaxviloyati">
+        <item>Arnasoy tumani</item>
+        <item>Baxmal tumani</item>
+        <item>Do\‘stlik tumani</item>
+        <item>Forish tumani</item>
+        <item>Jizzax shahri</item>
+        <item>Mirzacho\‘l tumani</item>
+        <item>Paxtakor tumani</item>
+        <item>Sh.Rashidov tumani</item>
+        <item>G\‘allaorol tumani</item>
+        <item>Yangiobod tumani</item>
+        <item>Zafarobod tumani</item>
+        <item>Zarbdor tumani</item>
+        <item>Zomin tumani</item>
+    </string-array>
+    <string-array name="qashqadaryoviloyati">
+        <item>Dehqonobod tumani</item>
+        <item>Kasbi tumani</item>
+        <item>Kitob tumani</item>
+        <item>Koson tumani</item>
+        <item>Mirishkor tumani</item>
+        <item>Muborak tumani</item>
+        <item>Nishon tumani</item>
+        <item>Qamashi tumani</item>
+        <item>Qarshi shahri</item>
+        <item>Qarshi tumani</item>
+        <item>Shahrisabz shahri</item>
+        <item>Shahrisabz tumani</item>
+        <item>G\‘uzor tumani</item>
+        <item>Yakkabog\‘ tumani</item>
+        <item>Chiroqchi tumani</item>
+    </string-array>
+    <string-array name="navoiyviloyati">
+        <item>Karman tumani</item>
+        <item>Konimex tumani</item>
+        <item>Navbahor tumani</item>
+        <item>Navoiy shahri</item>
+        <item>Nurota tumani</item>
+        <item>Qiziltepa tumani</item>
+        <item>Tomdi tumani</item>
+        <item>Uchquduq tumani</item>
+        <item>G\‘ozg\‘on shahri</item>
+        <item>Xatirchi tumani</item>
+        <item>Zarafshon shahri</item>
+    </string-array>
+    <string-array name="namanganviloyati">
+        <item>Davlatobod tumani</item>
+        <item>Kosonsoy tumani</item>
+        <item>Mingbuloq tumani</item>
+        <item>Namangan shahri</item>
+        <item>Namangan tumani</item>
+        <item>Norin tumani</item>
+        <item>Pop tumani</item>
+        <item>To\‘raqo\‘rg\‘on tumani</item>
+        <item>Uchqo\‘rg\‘on tumani</item>
+        <item>Uychi tumani</item>
+        <item>Yangiqo\‘rg\‘on tumani</item>
+        <item>Chortoq tumani</item>
+        <item>Chust tumani</item>
+    </string-array>
+    <string-array name="samarqandviloyati">
+        <item>Bulung\‘ur tumani</item>
+        <item>Jomboy tumani</item>
+        <item>Ishtixon tumani</item>
+        <item>Kattaqo\‘rg\‘on tumani</item>
+        <item>Kattaqo\‘rg\‘on shahri</item>
+        <item>Qo\‘shrabot tumani</item>
+        <item>Narpay tumani</item>
+        <item>Nurabod tumani</item>
+        <item>Oqdaryo tumani</item>
+        <item>Payariq tumani</item>
+        <item>Pastdarg\‘om tumani</item>
+        <item>Paxtachi tumani</item>
+        <item>Samarqand tumani</item>
+        <item>Samarqand shahri</item>
+        <item>Toyloq tumani</item>
+        <item>Urgut tumani</item>
+    </string-array>
+    <string-array name="surxondaryoviloyati">
+        <item>Angor tumani</item>
+        <item>Bandixon tumani</item>
+        <item>Bandixon tumani</item>
+        <item>Boysun tumani</item>
+        <item>Denov tumani</item>
+        <item>Jarqo\‘rg\‘on tumani</item>
+        <item>Muzrabot tumani</item>
+        <item>Oltinsoy tumani</item>
+        <item>Qiziriq tumani</item>
+        <item>Qo\‘mqo\‘rg\‘on tumani</item>
+        <item>Sariosiyo tumani</item>
+        <item>Termiz shahri</item>
+        <item>Termiz tumani</item>
+        <item>Uzun tumani</item>
+        <item>Sherobod tumani</item>
+        <item>Sho\‘rchi tumani</item>
+    </string-array>
+    <string-array name="sirdaryoviloyati">
+        <item>Boyovut tumani</item>
+        <item>Guliston shahri</item>
+        <item>Guliston tumani</item>
+        <item>Mirzaobod tumani</item>
+        <item>Oqoltin tumani</item>
+        <item>Sardoba tumani</item>
+        <item>Sayxunobod tumani</item>
+        <item>Sirdaryo tumani</item>
+        <item>Xavos tumani</item>
+        <item>Yangiyer shahri</item>
+        <item>Shirin shahri</item>
+    </string-array>
+    <string-array name="toshkentviloyati">
+        <item>Angren shahri</item>
+        <item>Bekobod shahri</item>
+        <item>Bekobod tumani</item>
+        <item>Bo\‘ka tumani</item>
+        <item>Bo\‘stonliq tumani</item>
+        <item>Chinoz tumani</item>
+        <item>Chirchiq shahri</item>
+        <item>O\‘rtachirchiq tumani</item>
+        <item>Ohangaron shahri</item>
+        <item>Ohangaron tumani</item>
+        <item>Olmaliq shahri</item>
+        <item>Oqqo\‘rg\‘on tumani</item>
+        <item>Parkent tumani</item>
+        <item>Piskent tumani</item>
+        <item>Qibray tumani</item>
+        <item>Quyichirchiq tumani</item>
+        <item>Toshkent tumani</item>
+        <item>Yangiyo\‘l shahri</item>
+        <item>Yangiyo\‘l tumani</item>
+        <item>Yuqorichirchiq tumani</item>
+        <item>Zangiota tumani</item>
+    </string-array>
+    <string-array name="toshkentshahri">
+        <item>Bektemir tumani</item>
+        <item>Mirobod tumani</item>
+        <item>MirzoUlug\‘bek tumani</item>
+        <item>Olmazor tumani</item>
+        <item>Shayxontohur tumani</item>
+        <item>Sirg\‘ali tumani</item>
+        <item>Uchtepa tumani</item>
+        <item>Yakkasaroy tumani</item>
+        <item>Yangihayot tumani</item>
+        <item>Yashnobod tumani</item>
+        <item>Yunusobod tumani</item>
+        <item>Chilonzor tumani</item>
+    </string-array>
+    <string-array name="fargonaviloyati">
+        <item>Beshariq tumani</item>
+        <item>Bog\‘dod tumani</item>
+        <item>Buvayda tumani</item>
+        <item>Dang\‘ara tumani</item>
+        <item>Farg\‘ona shahri</item>
+        <item>Farg\‘ona tumani</item>
+        <item>Furqat tumani</item>
+        <item>Marg\‘ilon shahri</item>
+        <item>O\‘zbekiston tumani</item>
+        <item>Oltiariq tumani</item>
+        <item>Qo\‘qon shahri</item>
+        <item>Qo\‘shtepa tumani</item>
+        <item>Quva tumani</item>
+        <item>Quvasoy shahri</item>
+        <item>Rishton tumani</item>
+        <item>So\‘x tumani</item>
+        <item>Toshloq tumani</item>
+        <item>Uchko\‘prik tumani</item>
+        <item>Yozyovon tumani</item>
+    </string-array>
+    <string-array name="xorazmviloyati">
+        <item>Bog\‘ot tumani</item>
+        <item>Do\‘stlik shahri</item>
+        <item>Gurlan tumani</item>
+        <item>Qo\‘shko\‘pir tumani</item>
+        <item>Shovot tumani</item>
+        <item>Tuproqqala tumani</item>
+        <item>Urganch shahri</item>
+        <item>Urganch tumani</item>
+        <item>Xazorasp tumani</item>
+        <item>Xiva shahri</item>
+        <item>Xiva tumani</item>
+        <item>Xonqa tumani</item>
+        <item>Yangiariq tumani</item>
+        <item>Yangibozor tumani</item>
+    </string-array>
+</resources>

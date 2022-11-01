@@ -1,0 +1,77 @@
+{
+  "project_info": {
+    "project_number": "809411775413",
+    "firebase_url": "https://kvart-app-default-rtdb.firebaseio.com",
+    "project_id": "kvart-app",
+    "storage_bucket": "kvart-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:809411775413:android:48b00f3ef4727c2e4227fc",
+        "android_client_info": {
+          "package_name": "uz.gita.kvartapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "809411775413-4t7sfc7lgiv5aajeaad9ilsdtglds9l5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "uz.gita.kvartapp",
+            "certificate_hash": "94907bb3b3bff0c2d899c8aa173c1c2bcd4f5c57"
+          }
+        },
+        {
+          "client_id": "809411775413-lneunai5iop29p2hogu1ce04jofg718i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgmWVoDaFsVFliY2bRx-rkXvzMRTECH4E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "809411775413-lneunai5iop29p2hogu1ce04jofg718i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:809411775413:android:db2c820d7bd40fd54227fc",
+        "android_client_info": {
+          "package_name": "uz.gita.kvartarena"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "809411775413-lneunai5iop29p2hogu1ce04jofg718i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgmWVoDaFsVFliY2bRx-rkXvzMRTECH4E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "809411775413-lneunai5iop29p2hogu1ce04jofg718i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
