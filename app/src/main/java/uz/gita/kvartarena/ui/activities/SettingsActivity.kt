@@ -14,7 +14,6 @@ import android.provider.MediaStore
 import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -78,7 +77,7 @@ class SettingsActivity : AppCompatActivity(), SlideDatePickerDialogCallback {
         binding.fiald3.setOnClickListener {
             datePicker()
         }
-        binding.upload.setOnClickListener { checkP() }
+        binding.circleImageView.setOnClickListener { checkP() }
         binding.save.setOnClickListener {
             saveInfo()
             uploadImage()
@@ -95,17 +94,6 @@ class SettingsActivity : AppCompatActivity(), SlideDatePickerDialogCallback {
                 val s = bRegion.trim().replace("‘", "").replace(" ", "").toLowerCase(Locale.ROOT)
                 val list = resources.getStringArray(this@SettingsActivity.resIdByName(s, "array")).toList()
                 showBottomSheetDialog(list, 2)
-            }
-        }
-        binding.regionTown.setOnClickListener {
-            val list = resources.getStringArray(R.array.regions).toList()
-            showBottomSheetDialog(list, 3)
-        }
-        binding.districtTown.setOnClickListener {
-            if (lRegion != "") {
-                val s = lRegion.trim().replace("‘", "").replace(" ", "").toLowerCase(Locale.ROOT)
-                val list = resources.getStringArray(this@SettingsActivity.resIdByName(s, "array")).toList()
-                showBottomSheetDialog(list, 4)
             }
         }
     }
@@ -146,15 +134,6 @@ class SettingsActivity : AppCompatActivity(), SlideDatePickerDialogCallback {
                 2 -> {
                     (binding.districtHome.getChildAt(0) as TextView).text = it
                     bDistrict = it
-                }
-                3 -> {
-                    (binding.regionTown.getChildAt(0) as TextView).text = it
-                    lRegion = it
-                    binding.districtTown.isClickable = true
-                }
-                4 -> {
-                    (binding.districtTown.getChildAt(0) as TextView).text = it
-                    lDistrict = it
                 }
             }
             bottomSheetDialog.dismiss()
@@ -229,7 +208,7 @@ class SettingsActivity : AppCompatActivity(), SlideDatePickerDialogCallback {
         matrix.postRotate(rotation.toFloat())
         val rotatedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.width, scaledBitmap.height, matrix, true)
         rotatedBitmap.compress(CompressFormat.JPEG, 80, baos)
-        binding.image.setImageBitmap(rotatedBitmap)
+        binding.circleImageView.setImageBitmap(rotatedBitmap)
         return baos.toByteArray()
     }
 

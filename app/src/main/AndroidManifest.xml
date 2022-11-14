@@ -27,7 +27,14 @@
         android:usesCleartextTraffic="false"
         tools:targetApi="31">
         <activity
-            android:name=".UserProfileActivity"
+            android:name=".ui.activities.GetMapinfoActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".ui.activities.UserProfileActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -79,7 +86,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.activities.MainActivity" />
-        <activity android:name=".ui.activities.UserProfileActivity" />
     </application>
 
 </manifest>

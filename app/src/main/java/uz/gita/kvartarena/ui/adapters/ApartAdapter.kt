@@ -15,7 +15,7 @@ import uz.gita.kvartarena.model.Apartment
 import uz.gita.kvartarena.utils.DiffUtils
 import uz.gita.kvartarena.utils.inflate
 
-class ApartAdapter(private val lifecycleOwner: LifecycleOwner) : ListAdapter<Apartment, ApartAdapter.VH>(DiffUtils<Apartment>()) {
+class ApartAdapter() : ListAdapter<Apartment, ApartAdapter.VH>(DiffUtils<Apartment>()) {
     private lateinit var listener: (Apartment) -> Unit
     fun setListener(block: (Apartment) -> Unit) {
         listener = block

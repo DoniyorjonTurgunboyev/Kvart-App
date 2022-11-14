@@ -1,16 +1,21 @@
 package uz.gita.kvartarena.ui.activities
 
+import android.Manifest
 import android.app.Activity
 import android.app.ProgressDialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Matrix
+import android.location.LocationManager
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
+import android.view.View
+import android.view.ViewGroup
+import android.view.animation.Transformation
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -21,15 +26,39 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.yandex.mapkit.Animation
+import com.yandex.mapkit.MapKit
+import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.CameraListener
+import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.map.CameraUpdateReason
+import com.yandex.mapkit.map.Map
+import com.yandex.mapkit.mapview.MapView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import retrofit2.Response
 import uz.gita.kvartarena.app.App
 import uz.gita.kvartarena.data.local.EncryptedLocalStorage
 import uz.gita.kvartarena.data.remote.FirebaseRemote
+import uz.gita.kvartarena.data.remote.GeoCoderRetrofit
 import uz.gita.kvartarena.databinding.ActivityCreateApartmentBinding
+import uz.gita.kvartarena.model.geocoder.GeoApi
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
 
-class CreateApartment : AppCompatActivity() {
+class CreateApartment : AppCompatActivity(), CameraListener {
+    private lateinit var mapView: MapView
+    private var margin = 4
+    private lateinit var mapKit: MapKit
+    private var s = true
+    private var lat: Double = 0.0
+    private var long: Double = 0.0
+    lateinit var locationManager: LocationManager
+    private val geoService = GeoCoderRetrofit.getRetrofit()
     private var rotation: Int = 0
     private lateinit var downsizedImageBytes: ByteArray
     private lateinit var firebaseStorage: FirebaseStorage
@@ -38,6 +67,7 @@ class CreateApartment : AppCompatActivity() {
     private val storage = EncryptedLocalStorage.getInstance()
     private lateinit var imageUri: Uri
     private val REQUEST_CODE = 200
+    private var change = false
     private lateinit var id: String
     private val user = App.user
     private lateinit var binding: ActivityCreateApartmentBinding
@@ -45,16 +75,33 @@ class CreateApartment : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityCreateApartmentBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        checkPer()
+        binding.myLocation.setOnClickListener {
+            geocoder()
+        }
+        binding.circleImageView.setOnClickListener {
+            checkP()
+        }
+        binding.back.setOnClickListener { finish() }
         firebaseStorage = FirebaseStorage.getInstance()
         firebaseDatabase = FirebaseDatabase.getInstance()
-        binding.address.text = App.user.address2!!.replace("/", "\n")
-        binding.upload.setOnClickListener { checkP() }
-        binding.back.setOnClickListener { finish() }
-        binding.owner.text = "${user.name} ${user.surname}"
         binding.create.setOnClickListener {
             id = String.format("%06d", ((System.currentTimeMillis() / 1000) % 1000000).toInt())
             saveInfo()
         }
+    }
+
+    private fun checkPer() {
+        Dexter.withContext(this).withPermissions(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+            .withListener(object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(p0: MultiplePermissionsReport?) {
+                    loadMap()
+                }
+
+                override fun onPermissionRationaleShouldBeShown(p0: MutableList<PermissionRequest>?, p1: PermissionToken?) {
+                    p1?.continuePermissionRequest()
+                }
+            }).check()
     }
 
     private fun uploadImage() {
@@ -80,21 +127,13 @@ class CreateApartment : AppCompatActivity() {
                 map["name"] = binding.name.text.toString().trim()
             }
         }
-        binding.bio.apply {
-            if (text.toString().trim() == "") {
-                this.error = "Ma'lumot kiriting"
-                return
-            } else {
-                map["bio"] = binding.bio.text.toString().trim()
-            }
-        }
         if (!this::imageUri.isInitialized) {
             Toast.makeText(this, "Please choose image", Toast.LENGTH_SHORT).show()
             return
         }
         uploadImage()
         map["owner"] = storage.uid
-        map["ownername"] = binding.owner.text.toString()
+        map["ownername"] = user.name!!
         map["address"] = App.user.address2!!
         firebaseDatabase.getReference("Apartments").child(id)
             .setValue(map)
@@ -115,7 +154,6 @@ class CreateApartment : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
-            // if multiple images are selected
             if (data?.clipData != null) {
                 var count = data.clipData?.itemCount
                 for (i in 0 until count!!) {
@@ -124,7 +162,7 @@ class CreateApartment : AppCompatActivity() {
             } else if (data?.data != null) {
                 imageUri = data.data!!
                 val isn = contentResolver.openInputStream(imageUri) as InputStream
-                val exifInterface: ExifInterface = ExifInterface(isn)
+                val exifInterface = ExifInterface(isn)
                 rotation = 0
                 val orientation = exifInterface.getAttributeInt(
                     ExifInterface.TAG_ORIENTATION,
@@ -136,8 +174,6 @@ class CreateApartment : AppCompatActivity() {
                     ExifInterface.ORIENTATION_ROTATE_270 -> rotation = 270
                 }
                 val fullBitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, imageUri)
-
-                Log.d("DDD", "uploadImage: ${fullBitmap.byteCount}")
                 val scaleDivider = 4
                 val scaleWidth: Int = fullBitmap.width / scaleDivider
                 val scaleHeight: Int = fullBitmap.height / scaleDivider
@@ -154,12 +190,12 @@ class CreateApartment : AppCompatActivity() {
         matrix.postRotate(rotation.toFloat())
         val rotatedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.width, scaledBitmap.height, matrix, true)
         rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 30, baos)
-        binding.image.setImageBitmap(rotatedBitmap)
+        binding.circleImageView.setImageBitmap(rotatedBitmap)
         return baos.toByteArray()
     }
 
     private fun checkP() {
-        Dexter.withContext(this).withPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest.permission.MANAGE_DOCUMENTS)
+        Dexter.withContext(this).withPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.MANAGE_DOCUMENTS)
             .withListener(object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(p0: MultiplePermissionsReport?) {
                     openGalleryForImages()
@@ -169,5 +205,110 @@ class CreateApartment : AppCompatActivity() {
                     p1?.continuePermissionRequest()
                 }
             }).check()
+    }
+
+    private fun loadMap() {
+        mapKit = MapKitFactory.getInstance()
+        mapView = binding.map
+        mapKit.onStart()
+        mapView.onStart()
+        val param = binding.imageView3.layoutParams as ViewGroup.MarginLayoutParams
+        margin = param.bottomMargin
+        mapView.map.addCameraListener(this)
+        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        mapView.map.move(CameraPosition(Point(41.311299, 69.279770), 14f, 0f, 0f), Animation(Animation.Type.SMOOTH, 2f), null)
+    }
+
+    override fun onStop() {
+        mapView.onStop()
+        MapKitFactory.getInstance().onStop()
+        super.onStop()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        MapKitFactory.getInstance().onStart()
+        mapView.onStart()
+    }
+
+    override fun onCameraPositionChanged(p0: Map, p1: CameraPosition, p2: CameraUpdateReason, p3: Boolean) {
+        val dpRatio: Float = this.resources.displayMetrics.density
+        if (p3) {
+            change = true
+            s = true
+            val animation = object : android.view.animation.Animation() {
+                override fun applyTransformation(interpolatedTime: Float, t: Transformation?) {
+                    val param = binding.imageView3.layoutParams as ViewGroup.MarginLayoutParams
+                    param.bottomMargin = (12 * dpRatio - 8 * interpolatedTime * dpRatio).toInt()
+                    binding.imageView3.layoutParams = param
+                }
+            }
+            animation.duration = 200
+            binding.imageView3.startAnimation(animation)
+            val animation2 = object : android.view.animation.Animation() {
+                override fun applyTransformation(interpolatedTime: Float, t: Transformation?) {
+                    val param = binding.imageView4.layoutParams
+                    param.width = ((16 + 16 * interpolatedTime) * dpRatio).toInt()
+                    param.height = ((4 + 4 * interpolatedTime) * dpRatio).toInt()
+                    binding.imageView4.alpha = 100 - 50 * interpolatedTime
+                }
+            }
+            animation2.duration = 200
+            binding.imageView4.startAnimation(animation2)
+        } else
+            if (s) {
+                s = false
+                val animation = object : android.view.animation.Animation() {
+                    override fun applyTransformation(interpolatedTime: Float, t: Transformation?) {
+                        val param = binding.imageView3.layoutParams as ViewGroup.MarginLayoutParams
+                        param.bottomMargin = (4 * dpRatio + 8 * interpolatedTime * dpRatio).toInt()
+                        binding.imageView3.layoutParams = param
+                    }
+                }
+                animation.duration = 200
+                binding.imageView3.startAnimation(animation)
+                val animation2 = object : android.view.animation.Animation() {
+                    override fun applyTransformation(interpolatedTime: Float, t: Transformation?) {
+                        val param = binding.imageView4.layoutParams
+                        param.width = ((32 - 16 * interpolatedTime) * dpRatio).toInt()
+                        param.height = ((8 - 4 * interpolatedTime) * dpRatio).toInt()
+                        binding.imageView4.alpha = 50 + 50 * interpolatedTime
+                    }
+                }
+                animation2.duration = 200
+                binding.imageView4.startAnimation(animation2)
+            }
+        if (p3) {
+            lat = p1.target.latitude
+            long = p1.target.longitude
+        }
+    }
+
+    private fun geocoder() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val geo = "$long,$lat"
+            if (change) {
+                runOnUiThread {
+                    binding.loading.visibility = View.VISIBLE
+                    binding.address.text = "Loading..."
+                }
+                delay(1000)
+                val call: retrofit2.Call<GeoApi> = geoService.get("json", "5ab3428d-3078-4c73-ae82-e66ee5f1cd74", "uz", geo)
+                call.enqueue(object : retrofit2.Callback<GeoApi> {
+                    override fun onResponse(call: retrofit2.Call<GeoApi>, response: Response<GeoApi>) {
+                        val t = response.body().toString()
+                        runOnUiThread {
+                            binding.address.text = t.substring(t.indexOf("text") + 5, t.indexOf("kind"))
+                            binding.loading.visibility = View.INVISIBLE
+                        }
+                    }
+
+                    override fun onFailure(call: retrofit2.Call<GeoApi>, t: Throwable) {
+
+                    }
+                })
+                change = false
+            }
+        }
     }
 }

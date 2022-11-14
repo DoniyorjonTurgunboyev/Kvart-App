@@ -30,14 +30,14 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.apart.setOnClickListener {
-            if (App.user.kid == "") {
+            if (App.user.kid == "" || App.user.kid == "null") {
                 Toast.makeText(this, "Siz hali kvartiraga qo'shilmagansiz", Toast.LENGTH_SHORT).show()
             } else {
                 startActivity(Intent(this, ApartmentActivity::class.java))
             }
         }
         binding.addApartment.setOnClickListener {
-            if (App.user.kid == "")
+            if (App.user.kid == "" || App.user.kid == "null")
                 startActivity(Intent(this, CreateApartment::class.java))
             else {
                 Toast.makeText(this, "Siz avval kvartira yaratgansiz", Toast.LENGTH_SHORT).show()

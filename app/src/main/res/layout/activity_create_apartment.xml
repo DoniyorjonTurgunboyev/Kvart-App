@@ -15,11 +15,11 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:layout_marginStart="16dp"
             android:id="@+id/back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginStart="16dp"
             android:padding="8dp"
             android:src="@drawable/ic_back"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -27,10 +27,10 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:layout_marginStart="-16dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginStart="-16dp"
             android:layout_marginEnd="24dp"
             android:fontFamily="@font/inter_medium"
             android:gravity="center"
@@ -44,135 +44,60 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/image"
-        android:layout_width="88dp"
-        android:layout_height="88dp"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:background="@drawable/back_cam"
+        android:elevation="5dp"
+        android:padding="4dp"
+        android:src="@drawable/ic_cam"
+        app:layout_constraintBottom_toBottomOf="@+id/circleImageView"
+        app:layout_constraintEnd_toEndOf="@+id/circleImageView" />
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/circleImageView"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_marginTop="16dp"
         android:src="@drawable/photo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
-    <RelativeLayout
-        android:id="@+id/upload"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/download_back"
-        android:gravity="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/image">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/download"
-            android:textColor="@color/green" />
-    </RelativeLayout>
-
-    <LinearLayout
-        android:id="@+id/field1"
-        android:layout_width="0dp"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/nameField"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/field"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/upload">
+        android:hint="Kvartira nomi"
+        app:expandedHintEnabled="false"
+        app:layout_constraintTop_toBottomOf="@+id/circleImageView">
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginHorizontal="16dp"
-            android:background="@android:color/transparent"
-            android:hint="Kvartira nomi"
-            android:textColorHint="#72777A"
-            android:textSize="16sp" />
-    </LinearLayout>
+            android:gravity="top"
+            android:hint="Kvartira nomini kiriting"
+            android:textSize="12sp" />
 
-    <LinearLayout
-        android:id="@+id/field2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/field"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.666"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/field1">
-
-        <EditText
-            android:id="@+id/bio"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginHorizontal="16dp"
-            android:background="@android:color/transparent"
-            android:hint="Bio"
-            android:textColorHint="#72777A"
-            android:textSize="16sp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/fiald"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/field"
-        android:backgroundTint="#A3FF9F"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/field2">
-
-        <EditText
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginHorizontal="16dp"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:clickable="false"
-            android:cursorVisible="false"
-            android:focusable="false"
-            android:fontFamily="@font/inter_regular"
-            android:hint="Owner"
-            android:textColor="#434343"
-            android:textColorHint="#72777A"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/owner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginEnd="16dp"
-            android:gravity="center"
-            android:text="owner" />
-    </LinearLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout
         android:id="@+id/fiald4"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/field"
-        android:backgroundTint="#A3FF9F"
         android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@+id/outlinedTextField"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fiald">
+        app:layout_constraintTop_toBottomOf="@+id/nameField"
+        app:layout_constraintVertical_bias="0.6">
 
-        <EditText
+        <TextView
+            android:id="@+id/address"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -181,23 +106,52 @@
             android:background="@android:color/transparent"
             android:clickable="false"
             android:cursorVisible="false"
+            android:ellipsize="end"
             android:focusable="false"
             android:fontFamily="@font/inter_regular"
-            android:hint="Address"
-            android:singleLine="true"
+            android:hint="Quyidagi xaritadan joylashuvni belgilang"
+            android:maxLines="2"
             android:textColor="#434343"
             android:textColorHint="#72777A"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/address"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginEnd="16dp"
-            android:gravity="center"
-            android:text="address" />
+            android:textSize="12sp" />
     </LinearLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/outlinedTextField"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:hint="Manzil"
+        app:expandedHintEnabled="false"
+        app:layout_constraintTop_toBottomOf="@+id/nameField">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:gravity="top"
+            android:textColor="#434343" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/loading"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="16dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/outlinedTextField"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="@+id/fiald4"
+        app:layout_constraintTop_toBottomOf="@+id/nameField"
+        app:layout_constraintVertical_bias="0.6"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/loading"
+        app:lottie_speed="3" />
 
     <RelativeLayout
         android:id="@+id/create"
@@ -221,5 +175,73 @@
             android:textAppearance="@style/text"
             android:textColor="@color/white" />
     </RelativeLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="24dp"
+        app:layout_constraintBottom_toTopOf="@+id/create"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/outlinedTextField">
+
+        <FrameLayout
+            android:id="@+id/cardView3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.yandex.mapkit.mapview.MapView
+                android:id="@+id/map"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </FrameLayout>
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginBottom="4dp"
+            android:elevation="4dp"
+            android:src="@drawable/apartment"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView4"
+            app:layout_constraintEnd_toEndOf="@+id/imageView4"
+            app:layout_constraintStart_toStartOf="@+id/imageView4" />
+
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:alpha="0.5"
+            android:elevation="17dp"
+            android:src="@drawable/shadow"
+            app:layout_constraintBottom_toBottomOf="@+id/cardView3"
+            app:layout_constraintEnd_toEndOf="@+id/cardView3"
+            app:layout_constraintStart_toStartOf="@+id/cardView3"
+            app:layout_constraintTop_toTopOf="@+id/cardView3" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/my_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="24dp"
+            app:cardCornerRadius="1dp"
+            app:cardElevation="1dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:text="Joylashuvni tasdiqlash"
+                android:textColor="@color/green" />
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

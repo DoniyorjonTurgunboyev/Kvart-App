@@ -91,7 +91,7 @@ class FirebaseRemote private constructor() {
     }
 
     fun getApart(kid: String, callback: (Apartment) -> Unit) {
-        if (kid != "") {
+        if (kid != "" && kid != "null") {
             apartments.child(kid).addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val map = snapshot.value as HashMap<*, *>
@@ -200,6 +200,9 @@ class FirebaseRemote private constructor() {
                     if (i == count)
                         callback.invoke(list)
                 }
+            }
+            .addOnFailureListener {
+                callback.invoke(list)
             }
     }
 

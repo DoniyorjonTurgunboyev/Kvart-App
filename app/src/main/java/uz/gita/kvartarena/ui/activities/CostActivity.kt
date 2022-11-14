@@ -61,7 +61,7 @@ class CostActivity : AppCompatActivity() {
         val expense = Expense(time.time.toString(), binding.comment.text.toString().trim(), summa, remote.auth.uid!!, user.name!!, type)
         remote.addExpense(user.kid.toString(), expense, list) {
             progressDialog.dismiss()
-            Toast.makeText(this, "Accept", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Muvaffaqiyatli qo'shildi", Toast.LENGTH_SHORT).show()
             finish()
         }
     }
@@ -155,7 +155,7 @@ class CostActivity : AppCompatActivity() {
         val monthName = SimpleDateFormat("MMMM", locale).format(calendar).toString()
         val day = SimpleDateFormat("dd", locale).format(calendar).toString()
         val weekDayName = SimpleDateFormat("EEEE", locale).format(calendar).toString()
-        val time = SimpleDateFormat("HH:mm:ss", locale).format(calendar).toString()
+        val time = SimpleDateFormat("HH:mm", locale).format(calendar).toString()
         val timeText = "$year-yil $day-$monthName, $weekDayName, $time"
         binding.time.setText(timeText)
     }

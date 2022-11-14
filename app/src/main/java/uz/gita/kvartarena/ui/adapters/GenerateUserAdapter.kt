@@ -60,14 +60,15 @@ class GenerateUserAdapter : ListAdapter<ItemUserGenerate, GenerateUserAdapter.VH
             itemView.setOnClickListener {
                 if (m != absoluteAdapterPosition) {
                     currentList[m].visibility = false
-                    notifyItemChanged(m)
+                    submitList(currentList)
+//                    notifyItemChanged(m)
                 }
                 if (more.visibility == View.VISIBLE) {
-                    TransitionManager.beginDelayedTransition(itemView as ViewGroup, AutoTransition())
+                    TransitionManager.beginDelayedTransition(itemView as ViewGroup, AutoTransition().setInterpolator(null))
                     currentList[absoluteAdapterPosition].visibility = false
                     more.visibility = View.GONE
                 } else {
-                    TransitionManager.beginDelayedTransition(itemView as ViewGroup, AutoTransition())
+                    TransitionManager.beginDelayedTransition(itemView as ViewGroup, AutoTransition().setInterpolator(null))
                     more.visibility = View.VISIBLE
                     currentList[absoluteAdapterPosition].visibility = true
                     smooth.invoke(absoluteAdapterPosition)

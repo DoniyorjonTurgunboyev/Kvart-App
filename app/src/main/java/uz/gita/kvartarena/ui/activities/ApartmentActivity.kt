@@ -7,6 +7,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.AutoTransition
+import androidx.transition.Fade
 import androidx.transition.TransitionManager
 import uz.gita.kvartarena.R
 import uz.gita.kvartarena.app.App
@@ -31,7 +32,6 @@ class ApartmentActivity : AppCompatActivity() {
         progressDialog = ProgressDialog(this)
         progressDialog.setTitle("Ma'lumotlar yuklanmoqda....")
         progressDialog.setCancelable(false)
-        progressDialog.show()
         onResume()
         apartment = App.apart
         binding.name.text = apartment.name + " kvartirasi"
@@ -49,9 +49,9 @@ class ApartmentActivity : AppCompatActivity() {
                     TransitionManager.beginDelayedTransition(binding.cardView2, AutoTransition().setDuration(500).setInterpolator(null).setStartDelay(300))
                     binding.m.setImageResource(R.drawable.ic_more)
                 } else {
-                    TransitionManager.beginDelayedTransition(binding.cardView, AutoTransition().setDuration(500))
-                    TransitionManager.beginDelayedTransition(binding.cardView2, AutoTransition().setInterpolator(null).setDuration(500))
                     visibility = View.VISIBLE
+                    TransitionManager.beginDelayedTransition(binding.cardView, AutoTransition().setInterpolator(null).setStartDelay(500).setDuration(500))
+                    TransitionManager.beginDelayedTransition(binding.cardView2, AutoTransition().setDuration(0).setInterpolator(null))
                     binding.m.setImageResource(R.drawable.ic_less)
                 }
             }
@@ -59,11 +59,11 @@ class ApartmentActivity : AppCompatActivity() {
         binding.expandU.setOnClickListener {
             binding.rvUser.apply {
                 if (this.visibility == View.VISIBLE) {
-                    TransitionManager.beginDelayedTransition(binding.cardView2, AutoTransition().setInterpolator(null).setStartDelay(500).setDuration(500))
                     visibility = View.GONE
+                    TransitionManager.beginDelayedTransition(binding.cardView2, AutoTransition().setInterpolator(null).setStartDelay(500).setDuration(500))
                     binding.u.setImageResource(R.drawable.ic_more)
                 } else {
-                    TransitionManager.beginDelayedTransition(binding.cardView2, AutoTransition().setInterpolator(null).setStartDelay(500).setDuration(500))
+                    TransitionManager.beginDelayedTransition(binding.cardView2, AutoTransition().setDuration(500))
                     visibility = View.VISIBLE
                     binding.u.setImageResource(R.drawable.ic_less)
                 }
@@ -73,7 +73,7 @@ class ApartmentActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-//        progressDialog.show()
+        progressDialog.show()
         remote.getExpenses {
             val list = it
             var all = 0
@@ -92,7 +92,9 @@ class ApartmentActivity : AppCompatActivity() {
             binding.rvUser.layoutManager = LinearLayoutManager(this)
             adapterUser = GenerateUserAdapter()
             adapterUser.setSmooth {
-                binding.rvUser.smoothScrollToPosition(adapterUser.currentList.size - 1)
+                binding.rvUser.post {
+                    binding.rvUser.smoothScrollToPosition(it)
+                }
             }
             adapterUser.setListener { uid ->
                 progressDialog.setTitle("Ma'lumotlar yuklanmoqda....")

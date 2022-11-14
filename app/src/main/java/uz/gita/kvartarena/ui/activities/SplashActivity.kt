@@ -10,7 +10,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import uz.gita.kvartarena.BuildConfig
 import uz.gita.kvartarena.R
 import uz.gita.kvartarena.app.App
 import uz.gita.kvartarena.data.local.EncryptedLocalStorage
@@ -33,9 +32,10 @@ class SplashActivity : AppCompatActivity() {
                     delay(3000)
                     FirebaseRemote.getInstance().getUser(storage.uid) { user ->
                         App.user = user
-                        if (user.kid != "") {
-                            FirebaseRemote.getInstance().getApart(user.kid.toString()){
-                                App.apart=it
+                        if (user.kid != "" && user.kid != "null") {
+                            Log.d("UUU", "onCreate: ${user.kid}")
+                            FirebaseRemote.getInstance().getApart(user.kid.toString()) {
+                                App.apart = it
                                 val intent = Intent(this@SplashActivity, MainActivity::class.java)
                                 startActivity(intent)
                                 finish()

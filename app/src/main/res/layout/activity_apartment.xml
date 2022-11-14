@@ -194,6 +194,7 @@
                     <androidx.recyclerview.widget.RecyclerView
                         android:layout_marginHorizontal="8dp"
                         android:id="@+id/rvUser"
+                        android:layout_marginBottom="8dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         tools:itemCount="4"

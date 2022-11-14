@@ -2,10 +2,14 @@ package uz.gita.kvartarena.ui.activities
 
 import android.app.AlertDialog
 import android.app.ProgressDialog
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -30,8 +34,25 @@ class ApartmentsActivity : AppCompatActivity() {
         progressDialog.setTitle("Ma'lumotlar yuklanmoqda....")
         progressDialog.show()
         progressDialog.setCancelable(false)
-        binding.rv.layoutManager = LinearLayoutManager(this)
-        adapter = ApartAdapter(this)
+        binding.rv.addOnScrollListener(object : OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+//                binding.rv.smoothScrollToPosition(newState)
+            }
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+
+            }
+        })
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            binding.rv.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+                Log.d("RRR", "onScrollStateChanged: $scrollX")
+                Log.d("RRR", "onScrollStateChanged: $oldScrollX")
+                Log.d("RRR", "onScrollStateChanged: $scrollY")
+                Log.d("RRR", "onScrollStateChanged: $oldScrollY")
+            }
+        }
+        binding.rv.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        adapter = ApartAdapter()
         val user = App.user
         binding.back.setOnClickListener { finish() }
         binding.rv.adapter = adapter
@@ -55,6 +76,7 @@ class ApartmentsActivity : AppCompatActivity() {
             builder.setMessage("" + it.address + " da joylashgan " + it.owner + " ga qarashli " + it.name + " kvartirasiga qo'shiasizmi?")
             builder.setPositiveButton("Ha albatta") { _, _ ->
                 FirebaseRemote.getInstance().addMemberToApartment(it.uid!!)
+                App.user.kid = it.uid
                 App.initUser()
                 App.initApart()
             }
@@ -74,6 +96,13 @@ class ApartmentsActivity : AppCompatActivity() {
                     val owner = apart.child("owner").value.toString()
                     val bio = apart.child("bio").value.toString()
                     val ownername = apart.child("ownername").value.toString()
+                    list.add(Apartment(uid, name, address, owner, ownername, bio))
+                    list.add(Apartment(uid, name, address, owner, ownername, bio))
+                    list.add(Apartment(uid, name, address, owner, ownername, bio))
+                    list.add(Apartment(uid, name, address, owner, ownername, bio))
+                    list.add(Apartment(uid, name, address, owner, ownername, bio))
+                    list.add(Apartment(uid, name, address, owner, ownername, bio))
+                    list.add(Apartment(uid, name, address, owner, ownername, bio))
                     list.add(Apartment(uid, name, address, owner, ownername, bio))
                 }
                 adapter.submitList(list)
