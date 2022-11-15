@@ -52,8 +52,8 @@ import java.io.InputStream
 
 class CreateApartment : AppCompatActivity(), CameraListener {
     private lateinit var mapView: MapView
-    private var margin = 4
     private lateinit var mapKit: MapKit
+    private var margin = 4
     private var s = true
     private var lat: Double = 0.0
     private var long: Double = 0.0
@@ -75,7 +75,7 @@ class CreateApartment : AppCompatActivity(), CameraListener {
         super.onCreate(savedInstanceState)
         binding = ActivityCreateApartmentBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        checkPer()
+        loadMap()
         binding.myLocation.setOnClickListener {
             geocoder()
         }
@@ -91,19 +91,6 @@ class CreateApartment : AppCompatActivity(), CameraListener {
         }
     }
 
-    private fun checkPer() {
-        Dexter.withContext(this).withPermissions(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
-            .withListener(object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(p0: MultiplePermissionsReport?) {
-                    loadMap()
-                }
-
-                override fun onPermissionRationaleShouldBeShown(p0: MutableList<PermissionRequest>?, p1: PermissionToken?) {
-                    p1?.continuePermissionRequest()
-                }
-            }).check()
-    }
-
     private fun uploadImage() {
         progressDialog = ProgressDialog(this)
         progressDialog.setTitle("Uploading File....")
@@ -112,6 +99,7 @@ class CreateApartment : AppCompatActivity(), CameraListener {
         firebaseStorage.getReference("images/$id").putBytes(downsizedImageBytes)
             .addOnSuccessListener {
                 progressDialog.dismiss()
+                App.initApart()
                 Toast.makeText(this, "Successfully added", Toast.LENGTH_SHORT).show()
                 finish()
             }
@@ -131,10 +119,18 @@ class CreateApartment : AppCompatActivity(), CameraListener {
             Toast.makeText(this, "Please choose image", Toast.LENGTH_SHORT).show()
             return
         }
-        uploadImage()
         map["owner"] = storage.uid
         map["ownername"] = user.name!!
-        map["address"] = App.user.address2!!
+        map["lat"] = lat
+        map["long"] = long
+        map["address"] = binding.address.text.toString()
+        if (map["address"].toString().isEmpty()) {
+            Toast.makeText(this, "Avval manzilni tasdiqlang", Toast.LENGTH_SHORT).show()
+            return
+        }
+        uploadImage()
+        App.user.address2 = map["address"].toString()
+        FirebaseRemote.getInstance().updateUser(App.user)
         firebaseDatabase.getReference("Apartments").child(id)
             .setValue(map)
             .addOnSuccessListener {
@@ -210,7 +206,7 @@ class CreateApartment : AppCompatActivity(), CameraListener {
     private fun loadMap() {
         mapKit = MapKitFactory.getInstance()
         mapView = binding.map
-        mapKit.onStart()
+        MapKitFactory.getInstance().onStart()
         mapView.onStart()
         val param = binding.imageView3.layoutParams as ViewGroup.MarginLayoutParams
         margin = param.bottomMargin
@@ -226,9 +222,9 @@ class CreateApartment : AppCompatActivity(), CameraListener {
     }
 
     override fun onStart() {
-        super.onStart()
-        MapKitFactory.getInstance().onStart()
+        mapKit.onStart()
         mapView.onStart()
+        super.onStart()
     }
 
     override fun onCameraPositionChanged(p0: Map, p1: CameraPosition, p2: CameraUpdateReason, p3: Boolean) {

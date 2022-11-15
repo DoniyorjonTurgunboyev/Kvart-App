@@ -15,27 +15,20 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.storage.FirebaseStorage
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import uz.gita.kvartarena.R
 import uz.gita.kvartarena.app.App
 import uz.gita.kvartarena.data.local.EncryptedLocalStorage
 import uz.gita.kvartarena.data.remote.FirebaseRemote
 import uz.gita.kvartarena.databinding.ActivityUserProfileBinding
 import uz.gita.kvartarena.model.User
-import uz.gita.kvartarena.ui.adapters.LocationAdapter
-import uz.gita.kvartarena.utils.resIdByName
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
-import java.util.*
 
 class UserProfileActivity : AppCompatActivity() {
     private lateinit var binding: ActivityUserProfileBinding
@@ -45,12 +38,10 @@ class UserProfileActivity : AppCompatActivity() {
     private val user = User(u.birthday, u.address1, u.name, u.surname, u.telegram, u.address2, u.kid, u.number)
     private lateinit var progressDialog: ProgressDialog
     private var rotation = 0
-    private var location = ""
     private var changePhoto = false
     private var changeName = false
     private var changeSurname = false
     private var changeTelegram = false
-    private var changeAddress = false
     private lateinit var downsizedImageBytes: ByteArray
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,10 +49,6 @@ class UserProfileActivity : AppCompatActivity() {
         binding = ActivityUserProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
         loadData()
-        binding.field6.setOnClickListener {
-            val list = resources.getStringArray(R.array.regions).toList()
-            showBottomSheetDialog(list, 1)
-        }
         binding.back.setOnClickListener { finish() }
         binding.name.addTextChangedListener {
             changeName = it.toString() != App.user.name
@@ -78,16 +65,11 @@ class UserProfileActivity : AppCompatActivity() {
             user.telegram = it.toString()
             checkSave()
         }
-        binding.address.addTextChangedListener {
-            changeAddress = App.user.address2?.replace("/", "\n") != it.toString()
-            user.address2 = it.toString().replace(",\n", "/")
-            checkSave()
-        }
         binding.circleImageView.setOnClickListener {
             checkP()
         }
         binding.save.setOnClickListener {
-            if (changeName || changeSurname || changeAddress || changeTelegram) {
+            if (changeName || changeSurname || changeTelegram) {
                 saveInfo()
             }
             if (changePhoto) {
@@ -125,7 +107,7 @@ class UserProfileActivity : AppCompatActivity() {
     }
 
     private fun checkSave() {
-        if (changeTelegram || changeName || changeAddress || changePhoto || changeSurname) {
+        if (changeTelegram || changeName || changePhoto || changeSurname) {
             binding.save.visibility = View.VISIBLE
         } else {
             binding.save.visibility = View.INVISIBLE
@@ -137,9 +119,9 @@ class UserProfileActivity : AppCompatActivity() {
         binding.name.setText(user.name)
         binding.surname.setText(user.surname)
         binding.telegram.setText(user.telegram)
-        binding.address.text = user.address2?.replace("/", ",\n")
-        binding.phone.text = user.number
         binding.hometown.text = user.address1?.replace("/", ",\n")
+        binding.phone.text = user.number
+        binding.address.text = user.address2!!.replace("Oʻzbekiston, Toshkent, ", "").replaceFirst(",", ",\n")
         binding.birthday.text = user.birthday
         FirebaseRemote.getInstance().getImageCallback("") {
             binding.circleImageView.setImageBitmap(BitmapFactory.decodeFile(it))
@@ -162,34 +144,6 @@ class UserProfileActivity : AppCompatActivity() {
         } else {
             Toast.makeText(this, "Please select image", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    private fun showBottomSheetDialog(list: List<String>, type: Int) {
-        val bottomSheetDialog = BottomSheetDialog(this)
-        bottomSheetDialog.setContentView(R.layout.bottomsheetdialog)
-        val rv = bottomSheetDialog.findViewById<RecyclerView>(R.id.rvLocation)!!
-        val adapter = LocationAdapter()
-        rv.layoutManager = LinearLayoutManager(this)
-        adapter.submitList(list)
-        rv.adapter = adapter
-        adapter.setListener {
-            when (type) {
-                1 -> {
-                    location = it
-                    val s = location.trim().replace("‘", "").replace(" ", "").toLowerCase(Locale.ROOT)
-                    val list = resources.getStringArray(this@UserProfileActivity.resIdByName(s, "array")).toList()
-                    showBottomSheetDialog(list, 2)
-                }
-                2 -> {
-                    location += "/$it"
-                    binding.address.text = location.replace("/", ",\n")
-                    changeAddress = true
-                    checkSave()
-                }
-            }
-            bottomSheetDialog.dismiss()
-        }
-        bottomSheetDialog.show()
     }
 
     @Deprecated("Deprecated in Java")

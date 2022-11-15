@@ -2,28 +2,37 @@ package uz.gita.kvartarena.ui.activities
 
 import android.app.AlertDialog
 import android.app.ProgressDialog
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.yandex.mapkit.Animation
+import com.yandex.mapkit.MapKit
+import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.mapview.MapView
 import uz.gita.kvartarena.app.App
 import uz.gita.kvartarena.data.remote.FirebaseRemote
 import uz.gita.kvartarena.databinding.ActivityApartmentsBinding
 import uz.gita.kvartarena.model.Apartment
 import uz.gita.kvartarena.ui.adapters.ApartAdapter
 
+
 class ApartmentsActivity : AppCompatActivity() {
+    private lateinit var mapView: MapView
+    private lateinit var mapKit: MapKit
     private lateinit var progressDialog: ProgressDialog
     private val firebaseDatabase = FirebaseDatabase.getInstance()
     private lateinit var binding: ActivityApartmentsBinding
+    private var position = Integer.MIN_VALUE
     private lateinit var adapter: ApartAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,24 +43,25 @@ class ApartmentsActivity : AppCompatActivity() {
         progressDialog.setTitle("Ma'lumotlar yuklanmoqda....")
         progressDialog.show()
         progressDialog.setCancelable(false)
-        binding.rv.addOnScrollListener(object : OnScrollListener() {
+        loadMap()
+        val snapHelper = LinearSnapHelper()
+        snapHelper.attachToRecyclerView(binding.rv)
+        binding.rv.smoothScrollBy(5, 0)
+        binding.rv.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        binding.rv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-//                binding.rv.smoothScrollToPosition(newState)
-            }
-
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-
+                super.onScrollStateChanged(recyclerView, newState)
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    val centerView: View = snapHelper.findSnapView(binding.rv.layoutManager)!!
+                    val pos: Int = (binding.rv.layoutManager as LinearLayoutManager).getPosition(centerView)
+                    val size = adapter.currentList.size
+                    if (size > pos % size && position != pos % size) {
+                        position = pos % size
+                        mapView.map.move(CameraPosition(Point(adapter.currentList[position].lat!!, adapter.currentList[position].long!!), 14f, 0f, 0f), Animation(Animation.Type.SMOOTH, 2f), null)
+                    }
+                }
             }
         })
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            binding.rv.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
-                Log.d("RRR", "onScrollStateChanged: $scrollX")
-                Log.d("RRR", "onScrollStateChanged: $oldScrollX")
-                Log.d("RRR", "onScrollStateChanged: $scrollY")
-                Log.d("RRR", "onScrollStateChanged: $oldScrollY")
-            }
-        }
-        binding.rv.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         adapter = ApartAdapter()
         val user = App.user
         binding.back.setOnClickListener { finish() }
@@ -59,10 +69,6 @@ class ApartmentsActivity : AppCompatActivity() {
         refresh()
         binding.back.setOnClickListener {
             finish()
-        }
-        binding.swip.setOnRefreshListener {
-            refresh()
-            adapter.notifyDataSetChanged()
         }
         adapter.setListener {
             val builder = AlertDialog.Builder(this)
@@ -83,6 +89,14 @@ class ApartmentsActivity : AppCompatActivity() {
             builder.setNegativeButton("Yo'q") { dialog, _ -> dialog.dismiss() }
             builder.create().show()
         }
+        binding.rv.scrollToPosition(Integer.MAX_VALUE / 2)
+    }
+
+    private fun loadMap() {
+        mapKit = MapKitFactory.getInstance()
+        mapView = binding.map
+        mapKit.onStart()
+        mapView.onStart()
     }
 
     private fun refresh() {
@@ -96,19 +110,14 @@ class ApartmentsActivity : AppCompatActivity() {
                     val owner = apart.child("owner").value.toString()
                     val bio = apart.child("bio").value.toString()
                     val ownername = apart.child("ownername").value.toString()
-                    list.add(Apartment(uid, name, address, owner, ownername, bio))
-                    list.add(Apartment(uid, name, address, owner, ownername, bio))
-                    list.add(Apartment(uid, name, address, owner, ownername, bio))
-                    list.add(Apartment(uid, name, address, owner, ownername, bio))
-                    list.add(Apartment(uid, name, address, owner, ownername, bio))
-                    list.add(Apartment(uid, name, address, owner, ownername, bio))
-                    list.add(Apartment(uid, name, address, owner, ownername, bio))
-                    list.add(Apartment(uid, name, address, owner, ownername, bio))
+                    val lat = apart.child("lat").value.toString().toDouble()
+                    val long = apart.child("long").value.toString().toDouble()
+                    mapView.map.mapObjects.addPlacemark(Point(lat, long))
+                    list.add(Apartment(uid, name, address, lat, long, owner, ownername, bio))
                 }
                 adapter.submitList(list)
                 adapter.notifyDataSetChanged()
                 progressDialog.dismiss()
-                binding.swip.isRefreshing = false
             }
 
             override fun onCancelled(error: DatabaseError) {

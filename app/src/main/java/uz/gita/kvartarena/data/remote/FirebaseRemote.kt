@@ -101,6 +101,8 @@ class FirebaseRemote private constructor() {
                     apartment.name = map["name"].toString()
                     apartment.ownerid = map["owner"].toString()
                     apartment.bio = map["bio"].toString()
+                    apartment.lat = map["lat"].toString().toDouble()
+                    apartment.long = map["long"].toString().toDouble()
                     apartment.uid = snapshot.key
                     callback.invoke(apartment)
                 }

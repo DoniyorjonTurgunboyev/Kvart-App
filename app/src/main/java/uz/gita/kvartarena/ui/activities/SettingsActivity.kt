@@ -51,8 +51,6 @@ class SettingsActivity : AppCompatActivity(), SlideDatePickerDialogCallback {
     private lateinit var downsizedImageBytes: ByteArray
     private var bRegion: String = ""
     private var bDistrict: String = ""
-    private var lRegion: String = ""
-    private var lDistrict: String = ""
     private val storage = EncryptedLocalStorage.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -144,7 +142,7 @@ class SettingsActivity : AppCompatActivity(), SlideDatePickerDialogCallback {
     private fun saveInfo() {
         val name = binding.name.text.toString()
         val surname = binding.surname.text.toString()
-        val address = "$lRegion/$lDistrict"
+        val address = ""
         FirebaseRemote.getInstance().createUser(
             User(
                 birthday = binding.birthday.text.toString(),
