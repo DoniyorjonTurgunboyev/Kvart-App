@@ -77,6 +77,7 @@ class SettingsActivity : AppCompatActivity(), SlideDatePickerDialogCallback {
         }
         binding.circleImageView.setOnClickListener { checkP() }
         binding.save.setOnClickListener {
+            if (bRegion == "" || bDistrict == "") return@setOnClickListener
             saveInfo()
             uploadImage()
         }

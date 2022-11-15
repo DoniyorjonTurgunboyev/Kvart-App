@@ -2,6 +2,7 @@ package uz.gita.kvartarena.ui.activities
 
 import android.app.AlertDialog
 import android.app.ProgressDialog
+import android.graphics.PointF
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -17,8 +18,10 @@ import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKit
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.map.*
 import com.yandex.mapkit.mapview.MapView
+import com.yandex.runtime.image.ImageProvider
+import uz.gita.kvartarena.R
 import uz.gita.kvartarena.app.App
 import uz.gita.kvartarena.data.remote.FirebaseRemote
 import uz.gita.kvartarena.databinding.ActivityApartmentsBinding
@@ -31,6 +34,7 @@ class ApartmentsActivity : AppCompatActivity() {
     private lateinit var mapKit: MapKit
     private lateinit var progressDialog: ProgressDialog
     private val firebaseDatabase = FirebaseDatabase.getInstance()
+    private lateinit var mapObjectCollection: MapObjectCollection
     private lateinit var binding: ActivityApartmentsBinding
     private var position = Integer.MIN_VALUE
     private lateinit var adapter: ApartAdapter
@@ -57,7 +61,7 @@ class ApartmentsActivity : AppCompatActivity() {
                     val size = adapter.currentList.size
                     if (size > pos % size && position != pos % size) {
                         position = pos % size
-                        mapView.map.move(CameraPosition(Point(adapter.currentList[position].lat!!, adapter.currentList[position].long!!), 14f, 0f, 0f), Animation(Animation.Type.SMOOTH, 2f), null)
+                        mapView.map.move(CameraPosition(Point(adapter.currentList[position].lat!!, adapter.currentList[position].long!!), 16f, 0f, 0f), Animation(Animation.Type.SMOOTH, 2f), null)
                     }
                 }
             }
@@ -97,6 +101,7 @@ class ApartmentsActivity : AppCompatActivity() {
         mapView = binding.map
         mapKit.onStart()
         mapView.onStart()
+        mapObjectCollection = mapView.map.mapObjects.addCollection()
     }
 
     private fun refresh() {
@@ -113,6 +118,13 @@ class ApartmentsActivity : AppCompatActivity() {
                     val lat = apart.child("lat").value.toString().toDouble()
                     val long = apart.child("long").value.toString().toDouble()
                     mapView.map.mapObjects.addPlacemark(Point(lat, long))
+                    val mark: PlacemarkMapObject = mapView.map.mapObjects.addCollection().addPlacemark(Point(lat, long))
+                    mark.opacity = 0.5f
+                    val icon = mark.useCompositeIcon()
+                    icon.setIcon("icon", ImageProvider.fromResource(this@ApartmentsActivity,R.drawable.apartment), IconStyle().setAnchor(PointF(0.5f, 0.5f))
+                        .setRotationType(RotationType.ROTATE)
+                        .setZIndex(1f)
+                        .setScale(0.5f))
                     list.add(Apartment(uid, name, address, lat, long, owner, ownername, bio))
                 }
                 adapter.submitList(list)
