@@ -38,6 +38,7 @@ class FirebaseRemote private constructor() {
         map["surname"] = user.surname!!
         map["telegram"] = user.telegram!!
         map["address2"] = user.address2!!
+        map["token"] = user.token!!
         users.child(storage.uid).updateChildren(map)
     }
 
@@ -52,11 +53,18 @@ class FirebaseRemote private constructor() {
                 setExpenseToMembers(expense.timeStamp, expense.type, expense.amount / members.size, members, expense.investor) {
                     c++
                     if (c == members.size) {
-                        callback1.invoke()
+                        sendNotifications(members, expense) {
+                            callback1.invoke()
+                        }
                     }
                 }
             }
         }
+    }
+
+    private fun sendNotifications(members: List<Member>, expense: Expense, callback1: () -> Unit) {
+        val name = App.user.name
+
     }
 
     private fun setExpenseToMembers(time: String, type: String, amount: Int, members: List<Member>, investor: String, callback1: () -> Unit) {

@@ -33,6 +33,7 @@ import uz.gita.kvartarena.data.local.EncryptedLocalStorage
 import uz.gita.kvartarena.data.remote.FirebaseRemote
 import uz.gita.kvartarena.databinding.ActivitySettingsBinding
 import uz.gita.kvartarena.model.User
+import uz.gita.kvartarena.notifications.FirebaseCloudMessaging
 import uz.gita.kvartarena.ui.adapters.LocationAdapter
 import uz.gita.kvartarena.utils.resIdByName
 import java.io.ByteArrayOutputStream
@@ -78,7 +79,6 @@ class SettingsActivity : AppCompatActivity(), SlideDatePickerDialogCallback {
         binding.circleImageView.setOnClickListener { checkP() }
         binding.save.setOnClickListener {
             if (bRegion == "" || bDistrict == "") return@setOnClickListener
-            saveInfo()
             uploadImage()
         }
     }
@@ -140,7 +140,7 @@ class SettingsActivity : AppCompatActivity(), SlideDatePickerDialogCallback {
         bottomSheetDialog.show()
     }
 
-    private fun saveInfo() {
+    private fun saveInfo(token: String) {
         val name = binding.name.text.toString()
         val surname = binding.surname.text.toString()
         val address = ""
@@ -150,9 +150,12 @@ class SettingsActivity : AppCompatActivity(), SlideDatePickerDialogCallback {
                 "$bRegion/$bDistrict",
                 name, surname, telegram = binding.telegram.text.toString(),
                 address,
-                number = binding.number.text.toString()
+                number = binding.number.text.toString(),
+                token = token
             )
         )
+        startActivity(Intent(this, SplashActivity::class.java))
+        finishAffinity()
         storage.settings = true
     }
 
@@ -220,10 +223,10 @@ class SettingsActivity : AppCompatActivity(), SlideDatePickerDialogCallback {
             firebaseStorage.getReference("images/" + storage.uid).putBytes(downsizedImageBytes)
                 .addOnSuccessListener {
                     progressDialog.dismiss()
-                    Toast.makeText(this, "Successfully", Toast.LENGTH_SHORT).show()
                     App.initUser()
-                    startActivity(Intent(this, SplashActivity::class.java))
-                    finishAffinity()
+                    FirebaseCloudMessaging.initToken {
+                        saveInfo(it)
+                    }
                 }
         } else {
             Toast.makeText(this, "Please select image", Toast.LENGTH_SHORT).show()

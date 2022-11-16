@@ -8,5 +8,6 @@ data class User(
     var telegram: String? = "",
     var address2: String? = "",
     var kid: String? = "",
-    var number: String? = ""
+    var number: String? = "",
+    var token: String? = ""
 ) : java.io.Serializable
