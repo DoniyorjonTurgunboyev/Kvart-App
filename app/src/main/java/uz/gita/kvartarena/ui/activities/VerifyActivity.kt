@@ -22,6 +22,7 @@ import uz.gita.kvartarena.R
 import uz.gita.kvartarena.data.local.EncryptedLocalStorage
 import uz.gita.kvartarena.data.remote.FirebaseRemote
 import uz.gita.kvartarena.databinding.ActivityVerifyBinding
+import uz.gita.kvartarena.notifications.FirebaseCloudMessaging
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
@@ -39,6 +40,7 @@ class VerifyActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityVerifyBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         number = storage.number
         numberF = storage.numberF
         sendVerificationCode(number)
@@ -89,6 +91,7 @@ class VerifyActivity : AppCompatActivity() {
                     if (it) {
                         EncryptedLocalStorage.getInstance().settings = true
                         val setIntent = Intent(this, SplashActivity::class.java)
+                        FirebaseCloudMessaging.initToken { }
                         finishAffinity()
                         startActivity(setIntent)
                     } else {

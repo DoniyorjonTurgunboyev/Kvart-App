@@ -1,7 +1,6 @@
 package uz.gita.kvartarena.data.remote
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.liveData
+import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -9,6 +8,9 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import uz.gita.kvartarena.app.App
 import uz.gita.kvartarena.data.local.EncryptedLocalStorage
 import uz.gita.kvartarena.data.local.SpinnersData
@@ -38,12 +40,13 @@ class FirebaseRemote private constructor() {
         map["surname"] = user.surname!!
         map["telegram"] = user.telegram!!
         map["address2"] = user.address2!!
-        map["token"] = user.token!!
         users.child(storage.uid).updateChildren(map)
     }
 
     fun createUser(user: User) {
-        users.child(auth.uid!!).setValue(user)
+        users.child(auth.uid!!).setValue(user).addOnSuccessListener {
+            Log.d("YYY", "createUser: ${user.token}")
+        }
     }
 
     fun addExpense(kid: String, expense: Expense, members: List<Member>, callback1: () -> Unit) {
@@ -63,8 +66,28 @@ class FirebaseRemote private constructor() {
     }
 
     private fun sendNotifications(members: List<Member>, expense: Expense, callback1: () -> Unit) {
-        val name = App.user.name
+        val notify = CloudMessagingRetrofit.getRetrofit()
+        for (i in members) {
+            users.child(i.uid).child("token").get().addOnSuccessListener {
+                val notificationX = NotificationX("${expense.investorName} ${expense.type} uchun ${expense.amount} to'lov amalga oshirdi", "Yangi xarajatlar")
+                val notification = Notification(
+                    notificationX, DataX(storage.uid),
+                    it.value.toString()
+                )
+                notify.sendNotification(notification).enqueue(object : Callback<NotificationResponse> {
+                    override fun onResponse(call: Call<NotificationResponse>, response: Response<NotificationResponse>) {
+                        Log.d("YYY", "onResponse: ${response.body()!!.multicast_id}")
+                    }
 
+                    override fun onFailure(call: Call<NotificationResponse>, t: Throwable) {
+
+                        TODO("Not yet implemented")
+                    }
+
+                })
+            }
+            callback1.invoke()
+        }
     }
 
     private fun setExpenseToMembers(time: String, type: String, amount: Int, members: List<Member>, investor: String, callback1: () -> Unit) {
@@ -141,17 +164,17 @@ class FirebaseRemote private constructor() {
         }
     }
 
-    fun getImage(uid: String): LiveData<String> = liveData {
-        var id = uid
-        if (uid == "") id = storage.uid
-        val f = File(App.instance.getExternalFilesDir("image"), id)
-        if (!f.exists()) {
-            firebaseStorage.reference.child("images/").child(id)
-                .getFile(f).addOnSuccessListener {
-
-                }
-        } else emit(f.absolutePath)
-    }
+//    fun getImage(uid: String): LiveData<String> = liveData {
+//        var id = uid
+//        if (uid == "") id = storage.uid
+//        val f = File(App.instance.getExternalFilesDir("image"), id)
+//        if (!f.exists()) {
+//            firebaseStorage.reference.child("images/").child(id)
+//                .getFile(f).addOnSuccessListener {
+//
+//                }
+//        } else emit(f.absolutePath)
+//    }
 
     fun getImageCallback(uid: String, callback: (String) -> Unit) {
         var id = uid
@@ -234,8 +257,8 @@ class FirebaseRemote private constructor() {
             .addOnSuccessListener {
                 val count = it.childrenCount.toInt()
                 it.children.forEach { user ->
-                    var name = ""
-                    var negA = 0;
+                    var name: String
+                    var negA = 0
                     var posA = 0
                     users.child(user.key!!).get()
                         .addOnSuccessListener {

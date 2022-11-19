@@ -146,12 +146,11 @@ class SettingsActivity : AppCompatActivity(), SlideDatePickerDialogCallback {
         val address = ""
         FirebaseRemote.getInstance().createUser(
             User(
-                birthday = binding.birthday.text.toString(),
+                binding.birthday.text.toString(),
                 "$bRegion/$bDistrict",
-                name, surname, telegram = binding.telegram.text.toString(),
-                address,
-                number = binding.number.text.toString(),
-                token = token
+                name, surname, binding.telegram.text.toString(),
+                address, "",
+                binding.number.text.toString(), token = token
             )
         )
         startActivity(Intent(this, SplashActivity::class.java))
@@ -223,7 +222,6 @@ class SettingsActivity : AppCompatActivity(), SlideDatePickerDialogCallback {
             firebaseStorage.getReference("images/" + storage.uid).putBytes(downsizedImageBytes)
                 .addOnSuccessListener {
                     progressDialog.dismiss()
-                    App.initUser()
                     FirebaseCloudMessaging.initToken {
                         saveInfo(it)
                     }

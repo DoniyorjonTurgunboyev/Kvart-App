@@ -17,16 +17,16 @@ class ProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        progressDialog = ProgressDialog(this)
+        progressDialog.setTitle("Update data....")
+        progressDialog.show()
+        progressDialog.setCancelable(false)
         uid = intent.extras?.getString("uid")!!
         loadData()
         loadImage()
         binding.back.setOnClickListener {
             finish()
         }
-        progressDialog = ProgressDialog(this)
-        progressDialog.setTitle("Update data....")
-        progressDialog.show()
-        progressDialog.setCancelable(false)
     }
 
     private fun loadData() {
@@ -42,7 +42,7 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun loadImage() {
-        FirebaseRemote.getInstance().getImage(uid).observe(this) {
+        FirebaseRemote.getInstance().getImageCallback(uid) {
             binding.circleImageView.setImageBitmap(BitmapFactory.decodeFile(it))
             progressDialog.dismiss()
         }

@@ -14,6 +14,7 @@ import uz.gita.kvartarena.R
 import uz.gita.kvartarena.app.App
 import uz.gita.kvartarena.data.local.EncryptedLocalStorage
 import uz.gita.kvartarena.data.remote.FirebaseRemote
+import uz.gita.kvartarena.notifications.FirebaseCloudMessaging
 
 class SplashActivity : AppCompatActivity() {
     private val storage = EncryptedLocalStorage.getInstance()

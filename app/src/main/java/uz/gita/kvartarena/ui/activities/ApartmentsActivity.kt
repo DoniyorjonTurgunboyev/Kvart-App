@@ -87,6 +87,7 @@ class ApartmentsActivity : AppCompatActivity() {
             builder.setPositiveButton("Ha albatta") { _, _ ->
                 FirebaseRemote.getInstance().addMemberToApartment(it.uid!!)
                 App.user.kid = it.uid
+                FirebaseRemote.getInstance().updateUser(App.user)
                 App.initUser()
                 App.initApart()
             }
@@ -121,10 +122,12 @@ class ApartmentsActivity : AppCompatActivity() {
                     val mark: PlacemarkMapObject = mapView.map.mapObjects.addCollection().addPlacemark(Point(lat, long))
                     mark.opacity = 0.5f
                     val icon = mark.useCompositeIcon()
-                    icon.setIcon("icon", ImageProvider.fromResource(this@ApartmentsActivity,R.drawable.apartment), IconStyle().setAnchor(PointF(0.5f, 0.5f))
-                        .setRotationType(RotationType.ROTATE)
-                        .setZIndex(1f)
-                        .setScale(0.5f))
+                    icon.setIcon(
+                        "icon", ImageProvider.fromResource(this@ApartmentsActivity, R.drawable.apartment), IconStyle().setAnchor(PointF(0.5f, 0.5f))
+                            .setRotationType(RotationType.ROTATE)
+                            .setZIndex(1f)
+                            .setScale(0.5f)
+                    )
                     list.add(Apartment(uid, name, address, lat, long, owner, ownername, bio))
                 }
                 adapter.submitList(list)
