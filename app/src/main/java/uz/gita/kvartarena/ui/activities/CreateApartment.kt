@@ -289,7 +289,7 @@ class CreateApartment : AppCompatActivity(), CameraListener {
                     binding.address.text = "Loading..."
                 }
                 delay(1000)
-                val call: retrofit2.Call<GeoApi> = geoService.get("json", "5ab3428d-3078-4c73-ae82-e66ee5f1cd74", "uz", geo)
+                val call: retrofit2.Call<GeoApi> = geoService.get("json", "Your Key", "uz", geo)
                 call.enqueue(object : retrofit2.Callback<GeoApi> {
                     override fun onResponse(call: retrofit2.Call<GeoApi>, response: Response<GeoApi>) {
                         val t = response.body().toString()

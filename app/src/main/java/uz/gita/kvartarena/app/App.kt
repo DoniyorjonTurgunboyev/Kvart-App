@@ -10,7 +10,7 @@ import uz.gita.kvartarena.model.Apartment
 import uz.gita.kvartarena.model.User
 
 class App : Application() {
-    private val MAPKIT_API_KEY = "ecdc9b44-18a2-4e46-a701-139d0435f94e"
+    private val MAPKIT_API_KEY = "Your API Key"
     companion object {
         lateinit var instance: App
         lateinit var user: User

@@ -87,7 +87,6 @@ class FirebaseRemote private constructor() {
 
                     override fun onFailure(call: Call<NotificationResponse>, t: Throwable) {
 
-                        TODO("Not yet implemented")
                     }
 
                 })
@@ -281,4 +280,6 @@ class FirebaseRemote private constructor() {
                 }
             }
     }
+
+
 }
