@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         progressDialog = ProgressDialog(this)
-        progressDialog.setTitle("Update data....")
+        progressDialog.setTitle("Iltimos kuting, ma'lumotlar yuklanmoqda....")
         progressDialog.show()
         progressDialog.setCancelable(false)
         loadImage()

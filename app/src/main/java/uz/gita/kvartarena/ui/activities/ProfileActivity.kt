@@ -35,9 +35,9 @@ class ProfileActivity : AppCompatActivity() {
         binding.fullname.text = user.name + " " + user.surname
         binding.surname.text = user.surname
         binding.telegram.text = user.telegram
-        binding.address.text = user.address2?.replace("/", ",\n")
+        binding.address.text = user.address2?.replace(",", ",\n")
         binding.phone.text = user.number
-        binding.hometown.text = user.address1?.replace("/", ",\n")
+        binding.hometown.text = user.address1?.replace(",", ",\n")
         binding.birthday.text = user.birthday
     }
 

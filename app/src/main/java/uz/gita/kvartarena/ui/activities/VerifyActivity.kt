@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.text.Html
+import android.util.Log
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -30,6 +31,7 @@ import java.util.concurrent.TimeUnit
 class VerifyActivity : AppCompatActivity() {
     private lateinit var binding: ActivityVerifyBinding
     private val storage = EncryptedLocalStorage.getInstance()
+    private val remote = FirebaseRemote.getInstance()
     private val pins = ArrayList<EditText>()
     private lateinit var number: String
     private lateinit var numberF: String
@@ -40,7 +42,6 @@ class VerifyActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityVerifyBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         number = storage.number
         numberF = storage.numberF
         sendVerificationCode(number)
@@ -50,7 +51,7 @@ class VerifyActivity : AppCompatActivity() {
     private fun sendVerificationCode(number: String) {
         val options = PhoneAuthOptions.newBuilder(auth)
             .setPhoneNumber(number)
-            .setTimeout(60L, TimeUnit.SECONDS)
+            .setTimeout(90L, TimeUnit.SECONDS)
             .setActivity(this)
             .setCallbacks(callbacks)
             .build()
@@ -85,15 +86,17 @@ class VerifyActivity : AppCompatActivity() {
     private fun signInUseCredential(phoneAuthCredential: PhoneAuthCredential) {
         auth.signInWithCredential(phoneAuthCredential)
             .addOnSuccessListener {
-                Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
-                FirebaseRemote.getInstance().checkUser(auth.uid!!) {
-                    EncryptedLocalStorage.getInstance().uid = auth.uid!!
-                    if (it) {
+                Toast.makeText(this, "Muvaffaqiyatli", Toast.LENGTH_SHORT).show()
+                FirebaseRemote.getInstance().checkUser(auth.uid!!) { hasUser ->
+                    storage.uid = auth.uid!!
+                    if (hasUser) {
                         EncryptedLocalStorage.getInstance().settings = true
-                        val setIntent = Intent(this, SplashActivity::class.java)
-                        FirebaseCloudMessaging.initToken { }
+                        val intent = Intent(this, SplashActivity::class.java)
+                        FirebaseCloudMessaging.initToken { token ->
+                            remote.updateToken(token)
+                        }
                         finishAffinity()
-                        startActivity(setIntent)
+                        startActivity(intent)
                     } else {
                         val setIntent = Intent(this, SettingsActivity::class.java)
                         finishAffinity()
@@ -124,7 +127,7 @@ class VerifyActivity : AppCompatActivity() {
     }
 
     private fun loadTimer() {
-        countDownTimer = object : CountDownTimer(30000, 1000) {
+        countDownTimer = object : CountDownTimer(90000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 var second = millisUntilFinished / 1000
                 val minut = second / 60

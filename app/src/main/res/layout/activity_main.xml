@@ -63,7 +63,7 @@
             android:background="@drawable/transparent_background"
             android:backgroundTint="@color/green"
             android:padding="16dp"
-            app:fabCradleRoundedCornerRadius="64dp">
+            app:fabCradleRoundedCornerRadius="32dp">
 
             <ImageView
                 android:id="@+id/add_apartment"
@@ -85,6 +85,7 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/apartment"
+            android:layout_marginBottom="32dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_baseline_home_work_24"
@@ -113,10 +114,11 @@
     </androidx.cardview.widget.CardView>
 
     <TextView
+        android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Mening kvartiram"
         android:fontFamily="@font/inter_regular"
+        android:text="Mening kvartiram"
         android:textColor="@color/green"
         app:layout_constraintEnd_toEndOf="@+id/apart"
         app:layout_constraintStart_toStartOf="@+id/apart"

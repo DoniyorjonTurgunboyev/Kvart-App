@@ -119,7 +119,7 @@ class UserProfileActivity : AppCompatActivity() {
         binding.name.setText(user.name)
         binding.surname.setText(user.surname)
         binding.telegram.setText(user.telegram)
-        binding.hometown.text = user.address1?.replace("/", ",\n")
+        binding.hometown.text = user.address1?.replace(", ", ",\n")
         binding.phone.text = user.number
         binding.address.text = user.address2!!.replace("Oʻzbekiston, Toshkent, ", "").replaceFirst(",", ",\n")
         binding.birthday.text = user.birthday
@@ -131,18 +131,18 @@ class UserProfileActivity : AppCompatActivity() {
     private fun uploadImage() {
         if (this::imageUri.isInitialized) {
             progressDialog = ProgressDialog(this)
-            progressDialog.setTitle("Uploading File....")
+            progressDialog.setTitle("Ma'lumotlar yuklanmoqda....")
             progressDialog.show()
             progressDialog.setCancelable(false)
             FirebaseStorage.getInstance().getReference("images/" + EncryptedLocalStorage.getInstance().uid).putBytes(downsizedImageBytes)
                 .addOnSuccessListener {
                     progressDialog.dismiss()
-                    Toast.makeText(this, "Successfully", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Tayyor", Toast.LENGTH_SHORT).show()
                     EncryptedLocalStorage.getInstance().profile = "1"
                     finish()
                 }
         } else {
-            Toast.makeText(this, "Please select image", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Iltimos avval rasm tnlang", Toast.LENGTH_SHORT).show()
         }
     }
 

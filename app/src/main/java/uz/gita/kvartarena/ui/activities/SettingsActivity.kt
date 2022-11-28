@@ -11,7 +11,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -27,8 +27,11 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.niwattep.materialslidedatepicker.SlideDatePickerDialog
 import com.niwattep.materialslidedatepicker.SlideDatePickerDialogCallback
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import uz.gita.kvartarena.R
-import uz.gita.kvartarena.app.App
 import uz.gita.kvartarena.data.local.EncryptedLocalStorage
 import uz.gita.kvartarena.data.remote.FirebaseRemote
 import uz.gita.kvartarena.databinding.ActivitySettingsBinding
@@ -49,9 +52,8 @@ class SettingsActivity : AppCompatActivity(), SlideDatePickerDialogCallback {
     private lateinit var imageUri: Uri
     private lateinit var firebaseStorage: FirebaseStorage
     private lateinit var progressDialog: ProgressDialog
+    private var bRegion = ""
     private lateinit var downsizedImageBytes: ByteArray
-    private var bRegion: String = ""
-    private var bDistrict: String = ""
     private val storage = EncryptedLocalStorage.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,28 +74,44 @@ class SettingsActivity : AppCompatActivity(), SlideDatePickerDialogCallback {
             Toast.makeText(this, month, Toast.LENGTH_SHORT).show()
             val result = Date(it)
             binding.birthday.text = simple.format(result)
+            binding.birthday.setTextColor(resources.getColor(R.color.black))
+        }
+        binding.telegram.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                (v as EditText).apply {
+                    if (text.toString().isEmpty()) {
+                        setText("@")
+                    }
+                }
+            } else {
+                (v as EditText).apply {
+                    if (text.toString().length == 1) {
+                        setText("")
+                    }
+                }
+            }
         }
         binding.fiald3.setOnClickListener {
             datePicker()
         }
         binding.circleImageView.setOnClickListener { checkP() }
         binding.save.setOnClickListener {
-            if (bRegion == "" || bDistrict == "") return@setOnClickListener
             uploadImage()
         }
     }
 
     private fun clickLocations() {
-        binding.regionHome.setOnClickListener {
+        binding.address.setOnClickListener {
             val list = resources.getStringArray(R.array.regions).toList()
             showBottomSheetDialog(list, 1)
         }
-        binding.districtHome.setOnClickListener {
-            if (bRegion != "") {
-                val s = bRegion.trim().replace("‘", "").replace(" ", "").toLowerCase(Locale.ROOT)
-                val list = resources.getStringArray(this@SettingsActivity.resIdByName(s, "array")).toList()
-                showBottomSheetDialog(list, 2)
-            }
+    }
+
+    private fun clickDistricts() {
+        if (bRegion != "") {
+            val s = bRegion.trim().replace("‘", "").replace(" ", "").toLowerCase(Locale.ROOT)
+            val list = resources.getStringArray(this@SettingsActivity.resIdByName(s, "array")).toList()
+            showBottomSheetDialog(list, 2)
         }
     }
 
@@ -117,22 +135,37 @@ class SettingsActivity : AppCompatActivity(), SlideDatePickerDialogCallback {
 
     private fun showBottomSheetDialog(list: List<String>, type: Int) {
         val bottomSheetDialog = BottomSheetDialog(this)
+        bottomSheetDialog.setCancelable(false)
         bottomSheetDialog.setContentView(R.layout.bottomsheetdialog)
         val rv = bottomSheetDialog.findViewById<RecyclerView>(R.id.rvLocation)!!
+        val title = bottomSheetDialog.findViewById<TextView>(R.id.textView2)!!
         val adapter = LocationAdapter()
         rv.layoutManager = LinearLayoutManager(this)
         adapter.submitList(list)
+        if (type == 1) {
+            title.text = "Viloyatni tanlang"
+        } else {
+            title.text = "Tumanni tanlang"
+        }
         rv.adapter = adapter
         adapter.setListener {
             when (type) {
                 1 -> {
-                    (binding.regionHome.getChildAt(0) as TextView).text = it
-                    bRegion = it
-                    binding.districtHome.isClickable = true
+                    CoroutineScope(Dispatchers.Main).launch {
+                        runOnUiThread {
+                            binding.home.text = "$it,"
+                        }
+                        bRegion = it
+                        delay(200)
+                        clickDistricts()
+                    }
                 }
                 2 -> {
-                    (binding.districtHome.getChildAt(0) as TextView).text = it
-                    bDistrict = it
+                    binding.home.apply {
+                        text = binding.home.text.toString() + " " + it
+                        setTextColor(resources.getColor(R.color.black))
+                        error = null
+                    }
                 }
             }
             bottomSheetDialog.dismiss()
@@ -141,21 +174,21 @@ class SettingsActivity : AppCompatActivity(), SlideDatePickerDialogCallback {
     }
 
     private fun saveInfo(token: String) {
-        val name = binding.name.text.toString()
-        val surname = binding.surname.text.toString()
+        val name = binding.name.text.toString().trim()
+        val surname = binding.surname.text.toString().trim()
         val address = ""
         FirebaseRemote.getInstance().createUser(
             User(
                 binding.birthday.text.toString(),
-                "$bRegion/$bDistrict",
+                binding.home.text.toString(),
                 name, surname, binding.telegram.text.toString(),
                 address, "",
                 binding.number.text.toString(), token = token
             )
         )
+        storage.settings = true
         startActivity(Intent(this, SplashActivity::class.java))
         finishAffinity()
-        storage.settings = true
     }
 
     private fun openGalleryForImages() {
@@ -215,8 +248,32 @@ class SettingsActivity : AppCompatActivity(), SlideDatePickerDialogCallback {
 
     private fun uploadImage() {
         if (this::imageUri.isInitialized) {
+            binding.name.apply {
+                if (text.toString().trim().isEmpty()) {
+                    error = "Ismingizni kiriting"
+                    return
+                }
+            }
+            binding.surname.apply {
+                if (text.toString().trim().isEmpty()) {
+                    error = "Familiyangizni kiriting"
+                    return
+                }
+            }
+            binding.birthday.apply {
+                if (text.toString() == "") {
+                    error = "Tug'ilgan sanangizni kiriting"
+                    return
+                }
+            }
+            binding.home.apply {
+                if (text.toString() == "") {
+                    error = "Tug'ilgan joyingizni kiriting"
+                    return
+                }
+            }
             progressDialog = ProgressDialog(this)
-            progressDialog.setTitle("Uploading File....")
+            progressDialog.setTitle("Ma'lumotlar yuborilmoqda....")
             progressDialog.show()
             progressDialog.setCancelable(false)
             firebaseStorage.getReference("images/" + storage.uid).putBytes(downsizedImageBytes)
@@ -227,12 +284,11 @@ class SettingsActivity : AppCompatActivity(), SlideDatePickerDialogCallback {
                     }
                 }
         } else {
-            Toast.makeText(this, "Please select image", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Iltimos avval rasm joylang", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun checkP() {
-        Log.d("TTT", "checkP: ")
         Dexter.withContext(this).withPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest.permission.MANAGE_DOCUMENTS)
             .withListener(object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(p0: MultiplePermissionsReport?) {
@@ -248,5 +304,6 @@ class SettingsActivity : AppCompatActivity(), SlideDatePickerDialogCallback {
     override fun onPositiveClick(day: Int, month: Int, year: Int, calendar: Calendar) {
         val format = SimpleDateFormat("dd.MM.yyyy", Locale("uz", "UZ"))
         binding.birthday.text = format.format(calendar.time)
+        binding.birthday.error = null
     }
 }

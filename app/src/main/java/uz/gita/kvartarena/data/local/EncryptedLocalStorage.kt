@@ -47,4 +47,7 @@ class EncryptedLocalStorage private constructor() {
     var profile: String
         get() = sharedPref.get("profile", "")
         set(value) = sharedPref.save("profile", value)
+    var token: String
+        get() = sharedPref.get("token", "")
+        set(value) = sharedPref.save("token", value)
 }

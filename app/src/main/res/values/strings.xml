@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Kvart App</string>
+    <string name="app_name">KvartApp</string>
     <string name="large_title">Xush kelibsiz!</string>
     <string name="a_caption">Akkauntga kirish</string>
     <string name="siz_kiritga">Siz kiritgan telefon raqamingizga sms ko`rinishida \n6 raqamdan iborat bo`lgan tasdiqlash kodi yuboriladi.</string>
@@ -221,7 +221,7 @@
     <string-array name="toshkentshahri">
         <item>Bektemir tumani</item>
         <item>Mirobod tumani</item>
-        <item>MirzoUlug\‘bek tumani</item>
+        <item>Mirzo Ulug\‘bek tumani</item>
         <item>Olmazor tumani</item>
         <item>Shayxontohur tumani</item>
         <item>Sirg\‘ali tumani</item>

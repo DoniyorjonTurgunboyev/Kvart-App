@@ -34,6 +34,12 @@ class FirebaseRemote private constructor() {
         }
     }
 
+    fun updateToken(token: String) {
+        val map = HashMap<String, Any>()
+        map["token"] = token
+        users.child(storage.uid).updateChildren(map)
+    }
+
     fun updateUser(user: User) {
         val map = HashMap<String, Any>()
         map["name"] = user.name!!
@@ -71,7 +77,7 @@ class FirebaseRemote private constructor() {
             users.child(i.uid).child("token").get().addOnSuccessListener {
                 val notificationX = NotificationX("${expense.investorName} ${expense.type} uchun ${expense.amount} to'lov amalga oshirdi", "Yangi xarajatlar")
                 val notification = Notification(
-                    notificationX, DataX(storage.uid),
+                    notificationX,
                     it.value.toString()
                 )
                 notify.sendNotification(notification).enqueue(object : Callback<NotificationResponse> {

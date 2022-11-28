@@ -6,6 +6,30 @@
     android:layout_height="match_parent"
     tools:context=".ui.activities.SettingsActivity">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/fullname"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="center"
+            android:text="Ro'yxatdan o'tish"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,7 +40,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/circleImageView"
         app:layout_constraintEnd_toEndOf="@+id/circleImageView" />
 
-
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/circleImageView"
         android:layout_width="96dp"
@@ -25,14 +48,14 @@
         android:src="@drawable/photo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
     <LinearLayout
         android:id="@+id/field1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="16sp"
+        android:layout_marginTop="24dp"
         android:background="@drawable/field"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -42,11 +65,13 @@
         <EditText
             android:id="@+id/name"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_marginHorizontal="16dp"
             android:background="@android:color/transparent"
             android:hint="Ismingiz"
+            android:inputType="textCapSentences"
+            android:maxLength="25"
             android:textColorHint="#72777A"
             android:textSize="16sp" />
     </LinearLayout>
@@ -67,11 +92,13 @@
         <EditText
             android:id="@+id/surname"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_marginHorizontal="16dp"
             android:background="@android:color/transparent"
             android:hint="Familiyangiz"
+            android:inputType="textCapSentences"
+            android:maxLength="25"
             android:textColorHint="#72777A"
             android:textSize="16sp" />
     </LinearLayout>
@@ -95,8 +122,9 @@
             android:layout_gravity="center"
             android:layout_marginHorizontal="16dp"
             android:layout_weight="1"
-            android:text="Tug'ilgan sanangiz"
-            android:textColor="#72777A"
+            android:hint="Tug'ilgan sanangiz"
+            android:textColor="@color/black"
+            android:textColorHint="#72777A"
             android:textSize="16sp" />
 
         <ImageView
@@ -116,6 +144,7 @@
         android:layout_marginHorizontal="24dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/field"
+        android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -124,6 +153,7 @@
         <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_marginVertical="16dp"
             android:layout_marginStart="16dp">
 
@@ -145,6 +175,7 @@
             android:focusable="false"
             android:fontFamily="@font/inter_regular"
             android:textColor="#434343"
+            android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -165,39 +196,74 @@
         <EditText
             android:id="@+id/telegram"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_marginHorizontal="16dp"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:hint="@string/telegram"
+            android:maxLength="25"
             android:textColorHint="#72777A"
             android:textSize="16sp" />
     </LinearLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/outlinedTextField"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:id="@+id/address"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
         android:layout_marginTop="16dp"
-        android:hint="Tug'ilgan joyingiz"
-        app:boxStrokeColor="@color/green"
-        app:expandedHintEnabled="false"
-        app:hintTextColor="@color/black"
+        android:background="@drawable/field"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/fiald4">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/town"
+        <TextView
+            android:id="@+id/home"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="false"
-            android:cursorVisible="false"
-            android:focusable="false"
-            android:gravity="top" />
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="16dp"
+            android:layout_weight="1"
+            android:ellipsize="marquee"
+            android:gravity="center|start"
+            android:hint="Tug'ilgan joyingizni tanlang"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:nestedScrollingEnabled="true"
+            android:overScrollMode="always"
+            android:singleLine="true"
+            android:textColorHint="#72777A"
+            android:textSize="16sp" />
+    </LinearLayout>
 
-    </com.google.android.material.textfield.TextInputLayout>
+    <!--    <com.google.android.material.textfield.TextInputLayout-->
+    <!--        android:id="@+id/outlinedTextField"-->
+    <!--        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginHorizontal="24dp"-->
+    <!--        android:layout_marginTop="16dp"-->
+    <!--        android:hint="Tug'ilgan joyingiz"-->
+    <!--        app:boxCornerRadiusBottomEnd="8dp"-->
+    <!--        app:boxCornerRadiusBottomStart="8dp"-->
+    <!--        app:boxCornerRadiusTopEnd="8dp"-->
+    <!--        app:boxCornerRadiusTopStart="8dp"-->
+    <!--        app:boxStrokeWidth="1dp"-->
+    <!--        app:expandedHintEnabled="false"-->
+    <!--        app:hintTextColor="@color/black"-->
+    <!--        app:layout_constraintTop_toBottomOf="@+id/fiald4">-->
+
+    <!--        <com.google.android.material.textfield.TextInputEditText-->
+    <!--            android:id="@+id/town"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:clickable="false"-->
+    <!--            android:cursorVisible="false"-->
+    <!--            android:focusable="false"-->
+    <!--            android:gravity="top" />-->
+
+    <!--    </com.google.android.material.textfield.TextInputLayout>-->
 
     <RelativeLayout
         android:id="@+id/save"
@@ -222,62 +288,34 @@
             android:textColor="@color/white" />
     </RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        app:layout_constraintBottom_toBottomOf="@+id/outlinedTextField"
-        app:layout_constraintEnd_toEndOf="@+id/outlinedTextField"
-        app:layout_constraintStart_toStartOf="@+id/outlinedTextField"
-        app:layout_constraintTop_toTopOf="@+id/outlinedTextField"
-        app:layout_constraintVertical_bias="0.6">
+    <!--    <LinearLayout-->
+    <!--        android:id="@+id/homeshow"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_marginHorizontal="40dp"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:gravity="center"-->
+    <!--        android:visibility="invisible"-->
+    <!--        app:layout_constraintBottom_toBottomOf="@+id/address"-->
+    <!--        app:layout_constraintEnd_toEndOf="@+id/address"-->
+    <!--        app:layout_constraintStart_toStartOf="@+id/address"-->
+    <!--        app:layout_constraintTop_toTopOf="@+id/address">-->
 
-        <LinearLayout
-            android:id="@+id/regionHome"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="16dp"
-            android:layout_weight="1">
+    <!--        <LinearLayout-->
+    <!--            android:id="@+id/regionHome"-->
+    <!--            android:layout_width="0dp"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_weight="1">-->
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:text="Viloyat / shahar" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_more" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/districtHome"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="8dp"
-            android:layout_weight="1">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:text="Tuman / shaharcha" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_more" />
-        </LinearLayout>
-    </LinearLayout>
+    <!--            <TextView-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="match_parent"-->
+    <!--                android:layout_weight="1"-->
+    <!--                android:ellipsize="end"-->
+    <!--                android:maxLines="1"-->
+    <!--                android:singleLine="true"-->
+    <!--                android:text="Viloyat / shahar"-->
+    <!--                android:textSize="16sp" />-->
+    <!--        </LinearLayout>-->
+    <!--    </LinearLayout>-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,59 +1,53 @@
 package uz.gita.kvartarena.ui.activities
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import uz.gita.kvartarena.R
 import uz.gita.kvartarena.app.App
 import uz.gita.kvartarena.data.local.EncryptedLocalStorage
 import uz.gita.kvartarena.data.remote.FirebaseRemote
-import uz.gita.kvartarena.notifications.FirebaseCloudMessaging
 
 class SplashActivity : AppCompatActivity() {
     private val storage = EncryptedLocalStorage.getInstance()
-
-    @RequiresApi(Build.VERSION_CODES.M)
+    private val remote = FirebaseRemote.getInstance()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
-        CoroutineScope(Dispatchers.IO).launch {
-            if (storage.uid == "") {
-                delay(3000)
-                startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
-                finish()
+        if (storage.uid == "") {
+            openLogin()
+        } else {
+            if (!storage.settings) {
+                openSettings()
             } else {
-                if (storage.settings) {
-                    delay(3000)
-                    FirebaseRemote.getInstance().getUser(storage.uid) { user ->
-                        App.user = user
-                        if (user.kid != "" && user.kid != "null") {
-                            Log.d("UUU", "onCreate: ${user.kid}")
-                            FirebaseRemote.getInstance().getApart(user.kid.toString()) {
-                                App.apart = it
-                                val intent = Intent(this@SplashActivity, MainActivity::class.java)
-                                startActivity(intent)
-                                finish()
-                            }
-                        } else {
-                            val intent = Intent(this@SplashActivity, MainActivity::class.java)
-                            startActivity(intent)
-                            finish()
+                remote.getUser(storage.uid) { user ->
+                    App.user = user
+                    if (user.kid != "") {
+                        remote.getApart(user.kid!!) { apart ->
+                            App.apart = apart
+                            openMainActivity()
                         }
+                    } else {
+                        openMainActivity()
                     }
-                } else {
-                    delay(3000)
-                    val intent = Intent(this@SplashActivity, SettingsActivity::class.java)
-                    startActivity(intent)
-                    finish()
                 }
             }
         }
+    }
+
+    private fun openLogin() {
+        startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+        finish()
+    }
+
+    private fun openSettings() {
+        startActivity(Intent(this@SplashActivity, SettingsActivity::class.java))
+        finish()
+    }
+
+    private fun openMainActivity() {
+        startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+        finish()
     }
 }

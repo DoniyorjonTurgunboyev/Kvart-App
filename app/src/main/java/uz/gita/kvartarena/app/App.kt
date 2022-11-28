@@ -34,6 +34,5 @@ class App : Application() {
         MapKitFactory.setApiKey(MAPKIT_API_KEY)
         instance = this
         EncryptedLocalStorage.init(this)
-        initUser()
     }
 }
