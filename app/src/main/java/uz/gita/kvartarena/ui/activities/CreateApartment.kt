@@ -3,16 +3,20 @@ package uz.gita.kvartarena.ui.activities
 import android.Manifest
 import android.app.Activity
 import android.app.ProgressDialog
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Matrix
 import android.location.LocationManager
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Transformation
@@ -46,9 +50,7 @@ import uz.gita.kvartarena.data.remote.FirebaseRemote
 import uz.gita.kvartarena.data.remote.GeoCoderRetrofit
 import uz.gita.kvartarena.databinding.ActivityCreateApartmentBinding
 import uz.gita.kvartarena.model.geocoder.GeoApi
-import java.io.ByteArrayOutputStream
-import java.io.IOException
-import java.io.InputStream
+import java.io.*
 
 class CreateApartment : AppCompatActivity(), CameraListener {
     private lateinit var mapView: MapView
@@ -87,6 +89,9 @@ class CreateApartment : AppCompatActivity(), CameraListener {
         firebaseDatabase = FirebaseDatabase.getInstance()
         binding.create.setOnClickListener {
             id = String.format("%06d", ((System.currentTimeMillis() / 1000) % 1000000).toInt())
+            binding.address
+            val bitmap = getScreenShotFromView(binding.cardView3)
+            saveMediaToStorage(bitmap!!)
             saveInfo()
         }
     }
@@ -184,20 +189,35 @@ class CreateApartment : AppCompatActivity(), CameraListener {
         val baos = ByteArrayOutputStream()
         val matrix = Matrix()
         matrix.postRotate(rotation.toFloat())
-        val rotatedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.width, scaledBitmap.height, matrix, true)
+        val rotatedBitmap = Bitmap.createBitmap(
+            scaledBitmap,
+            0,
+            0,
+            scaledBitmap.width,
+            scaledBitmap.height,
+            matrix,
+            true
+        )
         rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 30, baos)
         binding.circleImageView.setImageBitmap(rotatedBitmap)
         return baos.toByteArray()
     }
 
     private fun checkP() {
-        Dexter.withContext(this).withPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.MANAGE_DOCUMENTS)
+        Dexter.withContext(this).withPermissions(
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.MANAGE_DOCUMENTS
+        )
             .withListener(object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(p0: MultiplePermissionsReport?) {
                     openGalleryForImages()
                 }
 
-                override fun onPermissionRationaleShouldBeShown(p0: MutableList<PermissionRequest>?, p1: PermissionToken?) {
+                override fun onPermissionRationaleShouldBeShown(
+                    p0: MutableList<PermissionRequest>?,
+                    p1: PermissionToken?
+                ) {
                     p1?.continuePermissionRequest()
                 }
             }).check()
@@ -212,7 +232,11 @@ class CreateApartment : AppCompatActivity(), CameraListener {
         margin = param.bottomMargin
         mapView.map.addCameraListener(this)
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        mapView.map.move(CameraPosition(Point(41.311299, 69.279770), 14f, 0f, 0f), Animation(Animation.Type.SMOOTH, 2f), null)
+        mapView.map.move(
+            CameraPosition(Point(41.311299, 69.279770), 14f, 0f, 0f),
+            Animation(Animation.Type.SMOOTH, 2f),
+            null
+        )
     }
 
     override fun onStop() {
@@ -227,7 +251,12 @@ class CreateApartment : AppCompatActivity(), CameraListener {
         super.onStart()
     }
 
-    override fun onCameraPositionChanged(p0: Map, p1: CameraPosition, p2: CameraUpdateReason, p3: Boolean) {
+    override fun onCameraPositionChanged(
+        p0: Map,
+        p1: CameraPosition,
+        p2: CameraUpdateReason,
+        p3: Boolean
+    ) {
         val dpRatio: Float = this.resources.displayMetrics.density
         if (p3) {
             change = true
@@ -291,10 +320,14 @@ class CreateApartment : AppCompatActivity(), CameraListener {
                 delay(1000)
                 val call: retrofit2.Call<GeoApi> = geoService.get("json", "Your Key", "uz", geo)
                 call.enqueue(object : retrofit2.Callback<GeoApi> {
-                    override fun onResponse(call: retrofit2.Call<GeoApi>, response: Response<GeoApi>) {
+                    override fun onResponse(
+                        call: retrofit2.Call<GeoApi>,
+                        response: Response<GeoApi>
+                    ) {
                         val t = response.body().toString()
                         runOnUiThread {
-                            binding.address.text = t.substring(t.indexOf("text") + 5, t.indexOf("kind"))
+                            binding.address.text =
+                                t.substring(t.indexOf("text") + 5, t.indexOf("kind"))
                             binding.loading.visibility = View.INVISIBLE
                         }
                     }
@@ -305,6 +338,73 @@ class CreateApartment : AppCompatActivity(), CameraListener {
                 })
                 change = false
             }
+        }
+    }
+
+    private fun getScreenShotFromView(v: View): Bitmap? {
+        // create a bitmap object
+        var screenshot: Bitmap? = null
+        try {
+            // inflate screenshot object
+            // with Bitmap.createBitmap it
+            // requires three parameters
+            // width and height of the view and
+            // the background color
+            screenshot =
+                Bitmap.createBitmap(v.measuredWidth, v.measuredHeight, Bitmap.Config.ARGB_8888)
+            // Now draw this bitmap on a canvas
+            val canvas = Canvas(screenshot)
+            v.draw(canvas)
+        } catch (e: Exception) {
+            Log.e("TTT", "Failed to capture screenshot because:" + e.message)
+        }
+        // return the bitmap
+        return screenshot
+    }
+
+
+    // this method saves the image to gallery
+    private fun saveMediaToStorage(bitmap: Bitmap) {
+        // Generating a file name
+        val filename = "${System.currentTimeMillis()}.jpg"
+
+        // Output stream
+        var fos: OutputStream? = null
+
+        // For devices running android >= Q
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // getting the contentResolver
+            this.contentResolver?.also { resolver ->
+
+                // Content resolver will process the contentvalues
+                val contentValues = ContentValues().apply {
+
+                    // putting file information in content values
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
+                    put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg")
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+                }
+
+                // Inserting the contentValues to
+                // contentResolver and getting the Uri
+                val imageUri: Uri? =
+                    resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+
+                // Opening an outputstream with the Uri that we got
+                fos = imageUri?.let { resolver.openOutputStream(it) }
+            }
+        } else {
+            // These for devices running on android < Q
+            val imagesDir =
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+            val image = File(imagesDir, filename)
+            fos = FileOutputStream(image)
+        }
+
+        fos?.use {
+            // Finally writing the bitmap to the output stream that we opened
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
+            Toast.makeText(this, "Captured View and saved to Gallery", Toast.LENGTH_SHORT).show()
         }
     }
 }
